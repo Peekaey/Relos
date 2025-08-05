@@ -27,5 +27,5 @@ jobs:
       working-directory: ./Relos.Web
     - run: npm run build --if-present
       working-directory: ./Relos.Web
-    - run: npm test
+    - run: npm test --if-present
       working-directory: ./Relos.Web
