@@ -26,10 +26,10 @@ docker pull postgres:latest
 
 # Run the PostgreSQL container
 echo "Starting PostgreSQL container..."
-if ! docker run --name refrain \
-  -e POSTGRES_USER=refrain \
-  -e POSTGRES_PASSWORD=refrain\
-  -e POSTGRES_DB=refrain \
+if ! docker run --name relos \
+  -e POSTGRES_USER=relos \
+  -e POSTGRES_PASSWORD=relos\
+  -e POSTGRES_DB=relos \
   -p 5432:5432 \
   -d postgres:latest; then
   echo "Error: Failed to start PostgreSQL container."

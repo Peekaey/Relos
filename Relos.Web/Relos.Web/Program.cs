@@ -7,9 +7,12 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MudBlazor.Services;
-using Relos.Helpers.Authentication;
+using Relos.DataService;
+using Relos.DataService.Interfaces;
+using Relos.DataService.Repositories;
 using Relos.Web.Components;
 
 namespace Relos.Web;
@@ -28,10 +31,12 @@ public class Program
         ConfigureKestrel(builder, certPfx);
         ConfigureOauth(builder);
         ConfigureServices(builder);
+        ConfigureDatabaseServices(builder);
         ConfigureApplicationServices(builder);
         ConfigureLogging(builder);
         
         var app = builder.Build();
+        InitialiseDatabase(app);
         ConfigureWebApplication(app);
         app.Run();
     }
@@ -80,8 +85,12 @@ public class Program
 
     private static void ConfigureApplicationServices(WebApplicationBuilder builder)
     {
-        
-        
+        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+        builder.Services.AddScoped<IUserRepository, UserRepository>();
+        builder.Services.AddScoped<IUserOauthAccountRepository, UserOauthAccountRepository>();
+        builder.Services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
+        builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
     }
 
     private static void ConfigureLogging(WebApplicationBuilder builder)
@@ -103,6 +112,50 @@ public class Program
             options.ListenAnyIP(7265, listenOpts =>
                 listenOpts.UseHttps(certPfx, ""));
         });
+    }
+    
+    private static void ConfigureDatabaseServices(WebApplicationBuilder builder)
+    {
+        string postgresConnectionString = builder.Configuration["DatabaseConnectionString"];
+        
+        if (string.IsNullOrEmpty(postgresConnectionString))
+        {
+            Console.WriteLine("DatabaseConnectionString is missing");
+            throw new ArgumentException("Postgres connection string is not configured.");
+        }
+        
+        builder.Services.AddDbContext<DataContext>(options =>
+        {
+            options.UseNpgsql(postgresConnectionString, npgsqlOptions =>
+            {
+                npgsqlOptions.MigrationsAssembly("Relos.DataService");
+            });
+            options.UseNpgsql(postgresConnectionString)
+                .LogTo(Console.WriteLine, LogLevel.Information);
+        });
+    }
+    
+    private static void InitialiseDatabase(IHost host)
+    {
+        using (IServiceScope scope = host.Services.CreateScope())
+        {
+            try
+            {
+                DataContext dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+                if (!dbContext.Database.CanConnect())
+                {
+                    throw new ApplicationException("Unable to connect to database.");
+                }
+
+                dbContext.Database.Migrate();
+                Console.WriteLine("Database initialisation complete.");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error occurred while initialising database: " + e.Message);
+                throw;
+            }
+        }
     }
 
     private static void ConfigureOauth(WebApplicationBuilder builder)

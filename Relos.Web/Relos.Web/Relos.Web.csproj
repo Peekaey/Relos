@@ -10,8 +10,11 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.8" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.OAuth" Version="2.3.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
         <PackageReference Include="MudBlazor" Version="8.11.0" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
         <ProjectReference Include="..\..\Relos.Api\Relos.Api.csproj" />
+        <ProjectReference Include="..\..\Relos.DataService\Relos.DataService.csproj" />
         <ProjectReference Include="..\..\Relos.Helpers\Relos.Helpers.csproj" />
         <ProjectReference Include="..\Relos.Web.Client\Relos.Web.Client.csproj"/>
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.7"/>
