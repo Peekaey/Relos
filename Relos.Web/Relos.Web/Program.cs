@@ -28,7 +28,7 @@ public class Program
         string rootProjectDirectory = Directory.GetParent(rootPath)?.Parent?.Parent?.Parent?.Parent?.Parent?.FullName ?? rootPath;
         string certPfx = ValidateCertificates(rootPath, rootProjectDirectory);
 
-        ConfigureKestrel(builder, certPfx);
+        // ConfigureKestrel(builder, certPfx);
         ConfigureOauth(builder);
         ConfigureServices(builder);
         ConfigureDatabaseServices(builder);
