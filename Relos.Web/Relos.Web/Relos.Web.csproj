@@ -8,6 +8,11 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.8" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.OAuth" Version="2.3.0" />
+        <PackageReference Include="MudBlazor" Version="8.11.0" />
+        <ProjectReference Include="..\..\Relos.Api\Relos.Api.csproj" />
+        <ProjectReference Include="..\..\Relos.Helpers\Relos.Helpers.csproj" />
         <ProjectReference Include="..\Relos.Web.Client\Relos.Web.Client.csproj"/>
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.7"/>
     </ItemGroup>
@@ -16,6 +21,10 @@
       <Content Include="..\..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="wwwroot\images\" />
     </ItemGroup>
 
 </Project>
