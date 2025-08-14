@@ -10,9 +10,15 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MudBlazor.Services;
+using Relos.BusinessService;
+using Relos.BusinessService.DatabaseServices;
+using Relos.BusinessService.Interfaces;
 using Relos.DataService;
 using Relos.DataService.Interfaces;
 using Relos.DataService.Repositories;
+using Relos.DataService.Services;
+using Relos.Models.Enums;
+using Relos.Models.Results;
 using Relos.Web.Components;
 
 namespace Relos.Web;
@@ -26,7 +32,7 @@ public class Program
         
         string rootPath = AppContext.BaseDirectory;
         string rootProjectDirectory = Directory.GetParent(rootPath)?.Parent?.Parent?.Parent?.Parent?.Parent?.FullName ?? rootPath;
-        string certPfx = ValidateCertificates(rootPath, rootProjectDirectory);
+        // string certPfx = ValidateCertificates(rootPath, rootProjectDirectory);
 
         // ConfigureKestrel(builder, certPfx);
         ConfigureOauth(builder);
@@ -90,6 +96,14 @@ public class Program
         builder.Services.AddScoped<IUserOauthAccountRepository, UserOauthAccountRepository>();
         builder.Services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
         builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+        builder.Services.AddScoped<IAuthenticationBusinessService, AuthenticationBusinessService>();
+        builder.Services.AddScoped<IUserBusinessService, UserBusinessService>();
+        builder.Services.AddScoped<IWorkspaceBusinessService, WorkspaceBusinessService>();
+        builder.Services.AddScoped<IUserOauthAccountBusinessService, UserOauthAccountBusinessService>();
+        builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddScoped<IUserOauthAccountService, UserOauthAccountService>();
+        builder.Services.AddScoped<IWorkspaceService, WorkspaceService>();
+        
 
     }
 
@@ -230,6 +244,15 @@ public class Program
 
                         var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
                         logger.LogInformation("User {Login} (ID: {GitHubId}) authenticated successfully", login, githubId);
+                        
+                        ServiceResult registerUserResult = context.HttpContext.RequestServices.GetRequiredService<IAuthenticationBusinessService>()
+                            .ProcessOauthLogin(AuthProvider.Github, githubId, login, avatarUrl);
+
+                        if (!registerUserResult.IsSuccess)
+                        {
+                            // TODO Look at Invalidating Session with this
+                            context.HttpContext.Response.Redirect("/error");
+                        }
                         
                         return Task.CompletedTask;
                     }

@@ -12,7 +12,7 @@ using Relos.DataService;
 namespace Relos.DataService.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250814102753_Add_Initial_Migration")]
+    [Migration("20250814113040_Add_Initial_Migration")]
     partial class Add_Initial_Migration
     {
         /// <inheritdoc />
@@ -78,8 +78,9 @@ namespace Relos.DataService.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Uuid")
-                        .HasColumnType("integer");
+                    b.Property<string>("Uuid")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 

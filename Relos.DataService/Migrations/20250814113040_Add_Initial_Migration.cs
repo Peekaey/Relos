@@ -36,7 +36,7 @@ namespace Relos.DataService.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserId = table.Column<int>(type: "integer", nullable: false),
                     AuthProvider = table.Column<int>(type: "integer", nullable: false),
-                    Uuid = table.Column<int>(type: "integer", nullable: false),
+                    Uuid = table.Column<string>(type: "text", nullable: false),
                     Username = table.Column<string>(type: "text", nullable: false),
                     Avatar = table.Column<string>(type: "text", nullable: false),
                     LastUpdatedDateTimeUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),

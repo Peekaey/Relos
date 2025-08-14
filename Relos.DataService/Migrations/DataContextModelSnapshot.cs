@@ -75,8 +75,9 @@ namespace Relos.DataService.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Uuid")
-                        .HasColumnType("integer");
+                    b.Property<string>("Uuid")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 

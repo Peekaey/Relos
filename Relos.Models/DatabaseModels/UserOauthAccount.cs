@@ -13,7 +13,7 @@ public class UserOauthAccount : IBaseAuditable
     public int Id { get; set; }
     public int UserId { get; set; }
     public AuthProvider AuthProvider { get; set; }
-    public int Uuid { get; set; }
+    public string Uuid { get; set; }
     public string Username { get; set; }
     public string Avatar { get; set; }
     // IBaseAuditable
