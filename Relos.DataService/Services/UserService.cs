@@ -26,8 +26,9 @@ public class UserService : IUserService
             {
                 _dataContext.Users.Add(user);
                 _dataContext.SaveChanges();
+                int newUserId = user.Id;
                 transaction.Commit();
-                return SaveResult.AsCreated();
+                return SaveResult.AsCreated(newUserId);
             }
             catch (Exception ex)
             {

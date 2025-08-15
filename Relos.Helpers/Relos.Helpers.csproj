@@ -13,4 +13,8 @@
       <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.0.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Relos.Models\Relos.Models.csproj" />
+    </ItemGroup>
+
 </Project>

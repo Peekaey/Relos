@@ -20,6 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Relos.BackgroundService", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Relos.Api", "Relos.Api\Relos.Api.csproj", "{1C5EAA3F-9234-4EA7-A331-0C2D94A8934F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Relos.PageService", "Relos.PageService\Relos.PageService.csproj", "{8D743A3D-7ACA-4B62-B36C-65FBCB452255}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,5 +68,9 @@ Global
 		{1C5EAA3F-9234-4EA7-A331-0C2D94A8934F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C5EAA3F-9234-4EA7-A331-0C2D94A8934F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C5EAA3F-9234-4EA7-A331-0C2D94A8934F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D743A3D-7ACA-4B62-B36C-65FBCB452255}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D743A3D-7ACA-4B62-B36C-65FBCB452255}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D743A3D-7ACA-4B62-B36C-65FBCB452255}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D743A3D-7ACA-4B62-B36C-65FBCB452255}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

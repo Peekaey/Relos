@@ -12,6 +12,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Relos.DataService\Relos.DataService.csproj" />
+      <ProjectReference Include="..\Relos.Helpers\Relos.Helpers.csproj" />
     </ItemGroup>
 
 </Project>

@@ -25,7 +25,7 @@ public class AuthController : ControllerBase
     {
         var properties = new AuthenticationProperties
         {
-            RedirectUri = "/home",
+            RedirectUri = "/workspaces",
             IsPersistent = true
         };
         
@@ -36,7 +36,7 @@ public class AuthController : ControllerBase
     [AllowAnonymous]
     public IActionResult GitHubCallback()
     {
-        return Redirect("/home");
+        return Redirect("/workspaces");
     }
 
     [HttpGet("logout")]

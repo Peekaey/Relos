@@ -1,0 +1,95 @@
+@using System.ComponentModel.DataAnnotations
+@using MudBlazor
+@rendermode InteractiveServer
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form" @bind-IsValid="@isValid" @bind-Errors="@errors">
+            <MudTextField T="string"
+                          Label="Workspace Name"
+                          @bind-Value="workspaceName"
+                          For="@(() => workspaceName)"
+                          Immediate="true"
+                          Required="true"
+                          RequiredError="Workspace name is required"
+                          Variant="Variant.Outlined"
+                          Class="mb-4" />
+
+            <MudTextField T="string"
+                          Label="Description"
+                          @bind-Value="description"
+                          For="@(() => description)"
+                          Lines="3"
+                          Variant="Variant.Outlined"
+                          Class="mb-4" />
+
+            @if (errors.Length > 0)
+            {
+                <MudAlert Severity="Severity.Error" Class="mb-4">
+                    @foreach (var error in errors)
+                    {
+                        <MudText>@error</MudText>
+                    }
+                </MudAlert>
+            }
+        </MudForm>
+    </DialogContent>
+    
+    <DialogActions>
+        <MudButton OnClick="Cancel" 
+                  Variant="Variant.Text">
+            Cancel
+        </MudButton>
+        <MudButton OnClick="Submit" 
+                  Variant="Variant.Filled" 
+                  Color="Color.Primary" 
+                  Disabled="@(!isValid)">
+            Create Workspace
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
+
+    private MudForm form = default!;
+    private string[] errors = { };
+    private bool isValid;
+
+    [Required]
+    [StringLength(50, ErrorMessage = "Name length can't be more than 50 characters.")]
+    private string workspaceName = string.Empty;
+
+    [StringLength(200, ErrorMessage = "Description length can't be more than 200 characters.")]
+    private string description = string.Empty;
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+
+    private async Task Submit()
+    {
+        if (!isValid)
+            return;
+
+        await form.Validate();
+        
+        if (!isValid)
+            return;
+
+        var request = new CreateWorkspaceRequest
+        {
+            Name = workspaceName.Trim(),
+            Description = description.Trim()
+        };
+
+        MudDialog.Close(DialogResult.Ok(request));
+    }
+
+    public class CreateWorkspaceRequest
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+    }
+}

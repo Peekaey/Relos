@@ -19,6 +19,8 @@ using Relos.DataService.Repositories;
 using Relos.DataService.Services;
 using Relos.Models.Enums;
 using Relos.Models.Results;
+using Relos.PageService;
+using Relos.PageService.Interfaces;
 using Relos.Web.Components;
 
 namespace Relos.Web;
@@ -103,7 +105,7 @@ public class Program
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<IUserOauthAccountService, UserOauthAccountService>();
         builder.Services.AddScoped<IWorkspaceService, WorkspaceService>();
-        
+        builder.Services.AddScoped<IWorkspacePageService, WorkspacePageService>();
 
     }
 
@@ -178,7 +180,8 @@ public class Program
             {
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = "Github";
+                // options.DefaultChallengeScheme = "Github";
+                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             })
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
             {

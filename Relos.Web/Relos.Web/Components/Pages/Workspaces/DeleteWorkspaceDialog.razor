@@ -1,0 +1,57 @@
+@using System.ComponentModel.DataAnnotations
+@using MudBlazor
+@rendermode InteractiveServer
+
+<MudDialog>
+    <DialogContent>
+        <MudAlert Severity="Severity.Warning" Class="mb-4">
+            <MudText Typo="Typo.body1">
+                Are you sure you want to delete the workspace <strong>"@WorkspaceName"</strong>?
+            </MudText>
+            <MudText Typo="Typo.body2" Class="mt-2">
+                This action cannot be undone. All data associated with this workspace will be permanently removed.
+            </MudText>
+        </MudAlert>
+    </DialogContent>
+    
+    <DialogActions>
+        <MudButton OnClick="Cancel" 
+                   Variant="Variant.Text">
+            Cancel
+        </MudButton>
+        <MudButton OnClick="Submit" 
+                   Variant="Variant.Filled" 
+                   Color="Color.Error" 
+                   StartIcon="@Icons.Material.Filled.Delete">
+            Delete Workspace
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
+    [Parameter] public string WorkspaceName { get; set; } = string.Empty;
+    [Parameter] public int WorkspaceId { get; set; }
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+
+    private void Submit()
+    {
+        var request = new DeleteWorkspaceRequest
+        {
+            WorkspaceId = WorkspaceId,
+            WorkspaceName = WorkspaceName.Trim()
+        };
+
+        MudDialog.Close(DialogResult.Ok(request));
+    }
+
+    public class DeleteWorkspaceRequest
+    {
+        public int WorkspaceId { get; set; }
+        public string WorkspaceName { get; set; } = string.Empty;
+    }
+}

@@ -17,6 +17,7 @@
         <ProjectReference Include="..\..\Relos.BusinessService\Relos.BusinessService.csproj" />
         <ProjectReference Include="..\..\Relos.DataService\Relos.DataService.csproj" />
         <ProjectReference Include="..\..\Relos.Helpers\Relos.Helpers.csproj" />
+        <ProjectReference Include="..\..\Relos.PageService\Relos.PageService.csproj" />
         <ProjectReference Include="..\Relos.Web.Client\Relos.Web.Client.csproj"/>
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.7"/>
     </ItemGroup>
