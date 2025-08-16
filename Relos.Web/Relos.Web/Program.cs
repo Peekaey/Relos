@@ -17,11 +17,13 @@ using Relos.DataService;
 using Relos.DataService.Interfaces;
 using Relos.DataService.Repositories;
 using Relos.DataService.Services;
+using Relos.Helpers.Authentication;
 using Relos.Models.Enums;
 using Relos.Models.Results;
 using Relos.PageService;
 using Relos.PageService.Interfaces;
 using Relos.Web.Components;
+using AuthenticateResult = Relos.Models.Results.AuthenticateResult;
 
 namespace Relos.Web;
 
@@ -106,7 +108,11 @@ public class Program
         builder.Services.AddScoped<IUserOauthAccountService, UserOauthAccountService>();
         builder.Services.AddScoped<IWorkspaceService, WorkspaceService>();
         builder.Services.AddScoped<IWorkspacePageService, WorkspacePageService>();
-
+        builder.Services.AddScoped<IContactRepository, ContactRepository>();
+        builder.Services.AddScoped<IContactService, ContactService>();
+        builder.Services.AddScoped<IContactBusinessService, ContactBusinessService>();
+        builder.Services.AddScoped<IContactPageService, ContactPageService>();
+        builder.Services.AddScoped<IAuthenticationStateProviderExtensions, AuthenticationStateProviderExtensions>();
     }
 
     private static void ConfigureLogging(WebApplicationBuilder builder)
@@ -218,9 +224,9 @@ public class Program
                 options.Scope.Add("read:user");
 
                 // Claim mapping
-                options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
-                options.ClaimActions.MapJsonKey(ClaimTypes.Name, "login");
-                options.ClaimActions.MapJsonKey("avatar_url", "avatar_url");
+                options.ClaimActions.MapJsonKey("Uuid", "id");
+                options.ClaimActions.MapJsonKey("Username", "login");
+                options.ClaimActions.MapJsonKey("Avatar_url", "avatar_url");
                 // options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
 
                 options.Events = new OAuthEvents
@@ -241,14 +247,14 @@ public class Program
                     OnTicketReceived = context =>
                     {
                         
-                        string githubId = context.Principal.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
-                        string login = context.Principal.FindFirst(ClaimTypes.Name)?.Value ?? "";
-                        string avatarUrl = context.Principal.FindFirst("avatar_url")?.Value ?? "";
+                        string githubId = context.Principal.FindFirst("Uuid")?.Value ?? "";
+                        string login = context.Principal.FindFirst("Username")?.Value ?? "";
+                        string avatarUrl = context.Principal.FindFirst("Avatar_url")?.Value ?? "";
 
                         var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
                         logger.LogInformation("User {Login} (ID: {GitHubId}) authenticated successfully", login, githubId);
                         
-                        ServiceResult registerUserResult = context.HttpContext.RequestServices.GetRequiredService<IAuthenticationBusinessService>()
+                        AuthenticateResult registerUserResult = context.HttpContext.RequestServices.GetRequiredService<IAuthenticationBusinessService>()
                             .ProcessOauthLogin(AuthProvider.Github, githubId, login, avatarUrl);
 
                         if (!registerUserResult.IsSuccess)
@@ -256,6 +262,16 @@ public class Program
                             // TODO Look at Invalidating Session with this
                             context.HttpContext.Response.Redirect("/error");
                         }
+                        
+                        
+                        
+                        // Code smell
+                        var userIdentity = context.Principal.Identity as ClaimsIdentity;
+                        userIdentity.AddClaim(new Claim("ReloUserId", registerUserResult.UserId.ToString()));
+                        userIdentity.AddClaim(new Claim("Issuer", "Github"));
+                        
+                        
+                        
                         
                         return Task.CompletedTask;
                     }

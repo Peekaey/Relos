@@ -5,5 +5,5 @@ namespace Relos.BusinessService.Interfaces;
 
 public interface IAuthenticationBusinessService
 {
-    ServiceResult ProcessOauthLogin(AuthProvider provider, string uuid, string userName, string avatar);
+    AuthenticateResult ProcessOauthLogin(AuthProvider provider, string uuid, string userName, string avatar);
 }

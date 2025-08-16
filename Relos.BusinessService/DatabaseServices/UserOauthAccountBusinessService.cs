@@ -31,6 +31,7 @@ public class UserOauthAccountBusinessService : IUserOauthAccountBusinessService
 
         return new UserOauthAccountDto
         {
+            Id = userOauthAccount.Id,
             AuthProvider = userOauthAccount.AuthProvider,
             Username = userOauthAccount.Username,
             AvatarUrl = userOauthAccount.Avatar

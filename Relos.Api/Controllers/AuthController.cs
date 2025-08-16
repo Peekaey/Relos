@@ -57,10 +57,11 @@ public class AuthController : ControllerBase
             return Ok(new
             {
                 IsAuthenticated = true,
-                Username = User.Identity.Name,
-                UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
-                AvatarUrl = User.FindFirst("avatar_url")?.Value,
-                // Email = User.FindFirst(ClaimTypes.Email)?.Value
+                Username = User.FindFirst("UserName")?.Value,
+                ReloUserId = User.FindFirst("ReloUserId")?.Value,
+                Uuid = User.FindFirst("Uuid")?.Value,
+                Issuer = User.FindFirst("Issuer")?.Value,
+                AvatarUrl = User.FindFirst("Avatar_url")?.Value,
             });
         }
 

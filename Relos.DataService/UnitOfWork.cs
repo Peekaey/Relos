@@ -12,16 +12,17 @@ public class UnitOfWork : IUnitOfWork
     public IUserRepository UserRepository { get; }
     public IUserOauthAccountRepository UserOauthAccountRepository { get; }
     public IWorkspaceRepository WorkspaceRepository { get; }
+    public IContactRepository ContactRepository { get; }
 
     public UnitOfWork(ILogger<UnitOfWork> logger, DataContext context, IUserRepository userRepository, IUserOauthAccountRepository userOauthAccountRepository,
-        IWorkspaceRepository workspaceRepository)
+        IWorkspaceRepository workspaceRepository, IContactRepository contactRepository)
     {
         _logger = logger;
         _context = context;
         UserRepository = userRepository;
         UserOauthAccountRepository = userOauthAccountRepository;
         WorkspaceRepository = workspaceRepository;
-
+        ContactRepository = contactRepository;
     }
     
     public IDbContextTransaction BeginTransaction()

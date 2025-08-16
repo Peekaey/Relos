@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Relos.BusinessService.Interfaces;
 using Relos.DataService.Interfaces;
@@ -14,6 +15,7 @@ public class AuthenticationBusinessService : IAuthenticationBusinessService
     private readonly IUserBusinessService _userBusinessService;
     private readonly ILogger<AuthenticationBusinessService> _logger;
 
+
     public AuthenticationBusinessService(IUserOauthAccountBusinessService userOauthAccountBusinessService,
         IUserBusinessService userBusinessService, ILogger<AuthenticationBusinessService> logger)
     {
@@ -22,20 +24,23 @@ public class AuthenticationBusinessService : IAuthenticationBusinessService
         _logger = logger;
     }
     
-    public ServiceResult ProcessOauthLogin(AuthProvider provider, string uuid, string userName, string avatar)
+    public AuthenticateResult ProcessOauthLogin(AuthProvider provider, string uuid, string userName, string avatar)
     {
         UserOauthAccountDto? userOauthAccountDto = _userOauthAccountBusinessService.GetUserOauthAccountByUuid(uuid);
 
         if (userOauthAccountDto != null)
         {
-            return ServiceResult.AsSuccess();
+            return AuthenticateResult.AsSuccess(userOauthAccountDto.Id);
         }
         SaveResult saveNewUserResult = _userBusinessService.CreateAndSaveNewUser(provider, uuid, userName, avatar);
 
         if (!saveNewUserResult.IsSuccess)
         {
-            return ServiceResult.AsFailure("Failed to create new user");
+            return AuthenticateResult.AsFailure("Failed to create new user");
         }
-        return ServiceResult.AsSuccess();
+        return AuthenticateResult.AsSuccess(saveNewUserResult.CreatedIdValue);
     }
+    
+    
+    
 }
