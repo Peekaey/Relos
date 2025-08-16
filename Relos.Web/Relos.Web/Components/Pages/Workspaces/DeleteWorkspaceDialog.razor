@@ -1,41 +1,41 @@
 @using System.ComponentModel.DataAnnotations
-@using MudBlazor
+@using Radzen
+@using Radzen.Blazor
+@inject DialogService DialogService
 @rendermode InteractiveServer
 
-<MudDialog>
-    <DialogContent>
-        <MudAlert Severity="Severity.Warning" Class="mb-4">
-            <MudText Typo="Typo.body1">
+<RadzenStack Gap="1.5rem">
+    <RadzenAlert AlertStyle="AlertStyle.Warning" Variant="Variant.Flat" Shade="Shade.Lighter">
+        <RadzenStack Gap="0.5rem">
+            <RadzenText TextStyle="TextStyle.Body1">
                 Are you sure you want to delete the workspace <strong>"@WorkspaceName"</strong>?
-            </MudText>
-            <MudText Typo="Typo.body2" Class="mt-2">
+            </RadzenText>
+            <RadzenText TextStyle="TextStyle.Body2" Class="rz-color-danger-darker">
                 This action cannot be undone. All data associated with this workspace will be permanently removed.
-            </MudText>
-        </MudAlert>
-    </DialogContent>
-    
-    <DialogActions>
-        <MudButton OnClick="Cancel" 
-                   Variant="Variant.Text">
-            Cancel
-        </MudButton>
-        <MudButton OnClick="Submit" 
-                   Variant="Variant.Filled" 
-                   Color="Color.Error" 
-                   StartIcon="@Icons.Material.Filled.Delete">
-            Delete Workspace
-        </MudButton>
-    </DialogActions>
-</MudDialog>
+            </RadzenText>
+        </RadzenStack>
+    </RadzenAlert>
+
+    <RadzenStack Orientation="Orientation.Horizontal"
+                 JustifyContent="JustifyContent.End"
+                 Gap="0.5rem">
+        <RadzenButton Text="Cancel"
+                      ButtonStyle="ButtonStyle.Light"
+                      Click="@Cancel" />
+        <RadzenButton Text="Delete Workspace"
+                      ButtonStyle="ButtonStyle.Danger"
+                      Icon="delete"
+                      Click="@Submit" />
+    </RadzenStack>
+</RadzenStack>
 
 @code {
-    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
     [Parameter] public string WorkspaceName { get; set; } = string.Empty;
     [Parameter] public int WorkspaceId { get; set; }
 
     private void Cancel()
     {
-        MudDialog.Cancel();
+        DialogService.Close(false);
     }
 
     private void Submit()
@@ -46,7 +46,7 @@
             WorkspaceName = WorkspaceName.Trim()
         };
 
-        MudDialog.Close(DialogResult.Ok(request));
+        DialogService.Close(request);
     }
 
     public class DeleteWorkspaceRequest

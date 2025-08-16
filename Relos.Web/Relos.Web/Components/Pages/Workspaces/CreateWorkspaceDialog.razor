@@ -1,95 +1,78 @@
 @using System.ComponentModel.DataAnnotations
-@using MudBlazor
+@using Radzen
+@using Radzen.Blazor
+@inject DialogService DialogService
 @rendermode InteractiveServer
 
-<MudDialog>
-    <DialogContent>
-        <MudForm @ref="form" @bind-IsValid="@isValid" @bind-Errors="@errors">
-            <MudTextField T="string"
-                          Label="Workspace Name"
-                          @bind-Value="workspaceName"
-                          For="@(() => workspaceName)"
-                          Immediate="true"
-                          Required="true"
-                          RequiredError="Workspace name is required"
-                          Variant="Variant.Outlined"
-                          Class="mb-4" />
-
-            <MudTextField T="string"
-                          Label="Description"
-                          @bind-Value="description"
-                          For="@(() => description)"
-                          Lines="3"
-                          Variant="Variant.Outlined"
-                          Class="mb-4" />
-
-            @if (errors.Length > 0)
-            {
-                <MudAlert Severity="Severity.Error" Class="mb-4">
-                    @foreach (var error in errors)
-                    {
-                        <MudText>@error</MudText>
-                    }
-                </MudAlert>
-            }
-        </MudForm>
-    </DialogContent>
+<RadzenTemplateForm TItem="CreateWorkspaceRequest" Data="@model" Submit="@OnValidSubmit">
+    <DataAnnotationsValidator />
     
-    <DialogActions>
-        <MudButton OnClick="Cancel" 
-                  Variant="Variant.Text">
-            Cancel
-        </MudButton>
-        <MudButton OnClick="Submit" 
-                  Variant="Variant.Filled" 
-                  Color="Color.Primary" 
-                  Disabled="@(!isValid)">
-            Create Workspace
-        </MudButton>
-    </DialogActions>
-</MudDialog>
+    <RadzenStack Gap="1rem">
+        <RadzenFormField Text="Workspace Name" Variant="Variant.Outlined">
+            <RadzenTextBox @bind-Value="@model.Name" 
+                          Class="w-100" 
+                          Placeholder="Enter workspace name"
+                          Name="Name" />
+            <RadzenRequiredValidator Component="Name" Text="Workspace name is required" />
+            <RadzenLengthValidator Component="Name" Max="50" 
+                                 Text="Name length can't be more than 50 characters." />
+        </RadzenFormField>
+
+        <RadzenFormField Text="Description" Variant="Variant.Outlined">
+            <RadzenTextArea @bind-Value="@model.Description" 
+                           Rows="3" 
+                           Class="w-100"
+                           Placeholder="Enter description (optional)"
+                           Name="Description" />
+            <RadzenLengthValidator Component="Description" Max="200" 
+                                 Text="Description length can't be more than 200 characters." />
+        </RadzenFormField>
+
+        <RadzenStack Orientation="Orientation.Horizontal" 
+                    JustifyContent="JustifyContent.End" 
+                    Gap="0.5rem" 
+                    Class="rz-mt-4">
+            <RadzenButton Text="Cancel" 
+                         ButtonStyle="ButtonStyle.Light" 
+                         Click="@Cancel" />
+            <RadzenButton Text="Create Workspace" 
+                         ButtonStyle="ButtonStyle.Primary" 
+                         ButtonType="ButtonType.Submit" />
+        </RadzenStack>
+    </RadzenStack>
+</RadzenTemplateForm>
 
 @code {
-    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
+    private CreateWorkspaceRequest model = new();
 
-    private MudForm form = default!;
-    private string[] errors = { };
-    private bool isValid;
-
-    [Required]
-    [StringLength(50, ErrorMessage = "Name length can't be more than 50 characters.")]
-    private string workspaceName = string.Empty;
-
-    [StringLength(200, ErrorMessage = "Description length can't be more than 200 characters.")]
-    private string description = string.Empty;
+    protected override void OnInitialized()
+    {
+        model = new CreateWorkspaceRequest();
+    }
 
     private void Cancel()
     {
-        MudDialog.Cancel();
+        DialogService.Close(false);
     }
 
-    private async Task Submit()
+    private async Task OnValidSubmit()
     {
-        if (!isValid)
-            return;
-
-        await form.Validate();
-        
-        if (!isValid)
-            return;
-
         var request = new CreateWorkspaceRequest
         {
-            Name = workspaceName.Trim(),
-            Description = description.Trim()
+            Name = model.Name?.Trim() ?? string.Empty,
+            Description = model.Description?.Trim() ?? string.Empty
         };
 
-        MudDialog.Close(DialogResult.Ok(request));
+        DialogService.Close(request);
     }
 
     public class CreateWorkspaceRequest
     {
+        [Required]
+        [StringLength(50, ErrorMessage = "Name length can't be more than 50 characters.")]
         public string Name { get; set; } = string.Empty;
+
+        [StringLength(200, ErrorMessage = "Description length can't be more than 200 characters.")]
         public string Description { get; set; } = string.Empty;
     }
 }

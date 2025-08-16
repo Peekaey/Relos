@@ -1,98 +1,99 @@
 @page "/workspaces"
 @using Relos.Models.Results
-@using MudBlazor
+@using Radzen
+@using Radzen.Blazor
 @using Relos.BusinessService.Interfaces
 @using Relos.DataService.Services
 @using Relos.Models.Dtos
 @using Relos.Models.Pages
 @using Relos.PageService.Interfaces
 @inject IWorkspacePageService _workspacePageService
-@inject IDialogService DialogService
-@inject ISnackbar Snackbar
+@inject DialogService DialogService
+@inject NotificationService NotificationService
 @inject ILogger<Workspaces> Logger
 @rendermode InteractiveServer
+
 <PageTitle>Workspaces</PageTitle>
 
-<MudStack Row Justify="Justify.FlexEnd" Class="mb-4">
-    <MudButton OnClick="OpenCreateWorkspaceDialog" 
-               Variant="Variant.Filled" 
-               Color="Color.Primary"
-               StartIcon="@Icons.Material.Filled.Add"
-               Disabled="isLoading">
-        Create new Workspace
-    </MudButton>
-</MudStack>
+<RadzenStack Gap="1.5rem">
+    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
+        <RadzenButton Text="Create new Workspace"
+                     ButtonStyle="ButtonStyle.Primary"
+                     Icon="add"
+                     Click="@OpenCreateWorkspaceDialog"
+                     Disabled="@isLoading" />
+    </RadzenStack>
 
-<MudContainer>
-    <MudContainer>
-        <MudText Typo="Typo.h4" Align="Align.Center">
+    <RadzenCard>
+        <RadzenText TextStyle="TextStyle.H4" Class="rz-text-align-center rz-mb-4">
             Please select the workspace
-        </MudText>
-    </MudContainer>
+        </RadzenText>
 
-    @if (isLoading)
-    {
-        <MudPaper Class="pa-8 text-center">
-            <MudProgressCircular Indeterminate="true"/>
-            <MudText Class="mt-2">Loading workspaces...</MudText>
-        </MudPaper>
-    }
-    else if (loadError != null)
-    {
-        <MudAlert Severity="Severity.Error" Class="mb-4">
-            @loadError
-            <MudButton OnClick="LoadWorkspaces" Size="Size.Small" Class="ml-2">
-                Retry
-            </MudButton>
-        </MudAlert>
-    }
-    else
-    {
-        <MudPaper Class="pa-4">
+        @if (isLoading)
+        {
+            <RadzenCard Class="rz-text-align-center rz-p-8">
+                <RadzenProgressBarCircular ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
+                <RadzenText Class="rz-mt-2">Loading workspaces...</RadzenText>
+            </RadzenCard>
+        }
+        else if (loadError != null)
+        {
+            <RadzenAlert AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Class="rz-mb-4">
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                    <RadzenText>@loadError</RadzenText>
+                    <RadzenButton Text="Retry"
+                                 ButtonStyle="ButtonStyle.Light"
+                                 Size="ButtonSize.Small"
+                                 Click="@LoadWorkspaces" />
+                </RadzenStack>
+            </RadzenAlert>
+        }
+        else
+        {
             @if (workspaces.Any())
             {
-                <MudGrid>
+                <RadzenRow Gap="1rem">
                     @foreach (var workspace in workspaces)
                     {
-                        <MudItem xs="12" md="6" lg="4">
-                            <MudCard Elevation="2">
-                                <MudCardContent>
-                                    <MudText Typo="Typo.h6">@workspace.Name</MudText>
-                                    <MudText Typo="Typo.body2" Color="Color.Secondary">
+                        <RadzenColumn Size="12" SizeMD="6" SizeLG="4">
+                            <RadzenCard>
+                                <RadzenStack Gap="0.5rem">
+                                    <RadzenText TextStyle="TextStyle.H6">@workspace.Name</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Body2" Class="rz-color-base-600">
                                         @workspace.Description
-                                    </MudText>
-                                    <MudText Typo="Typo.caption" Color="Color.Tertiary">
+                                    </RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Caption" Class="rz-color-base-500">
                                         Created: @workspace.CreatedOn.ToString("MMM dd, yyyy")
-                                    </MudText>
-                                </MudCardContent>
-                                <MudCardActions>
-                                    <MudButton Size="Size.Small"
-                                               Color="Color.Primary"
-                                               Variant="Variant.Text"
-                                               OnClick="() => OpenWorkspace(workspace.Id)">
-                                        Open
-                                    </MudButton>
-                                    <MudButton Size="Size.Small"
-                                               Color="Color.Secondary"
-                                               Variant="Variant.Text"
-                                               OnClick="() => OpenDeleteWorkspaceDialog(workspace)">
-                                        Delete
-                                    </MudButton>
-                                </MudCardActions>
-                            </MudCard>
-                        </MudItem>
+                                    </RadzenText>
+                                </RadzenStack>
+
+                                <RadzenStack Orientation="Orientation.Horizontal"
+                                           Gap="0.5rem"
+                                           Class="rz-mt-3">
+                                    <RadzenButton Text="Open"
+                                                 ButtonStyle="ButtonStyle.Light"
+                                                 Size="ButtonSize.Small"
+                                                 Click="@(() => OpenWorkspace(workspace.Id))" />
+                                    <RadzenButton Text="Delete"
+                                                 ButtonStyle="ButtonStyle.Danger"
+                                                 Variant="Variant.Text"
+                                                 Size="ButtonSize.Small"
+                                                 Click="@(() => OpenDeleteWorkspaceDialog(workspace))" />
+                                </RadzenStack>
+                            </RadzenCard>
+                        </RadzenColumn>
                     }
-                </MudGrid>
+                </RadzenRow>
             }
             else
             {
-                <MudText Class="text-center pa-8" Color="Color.Secondary">
+                <RadzenText Class="rz-text-align-center rz-p-8 rz-color-base-600">
                     No workspaces found. Create your first workspace to get started!
-                </MudText>
+                </RadzenText>
             }
-        </MudPaper>
-    }
-</MudContainer>
+        }
+    </RadzenCard>
+</RadzenStack>
 
 @code {
     private List<WorkspaceDto> workspaces = new List<WorkspaceDto>();
@@ -113,7 +114,7 @@
         try
         {
             WorkspacesVm loadResult = await _workspacePageService.GetUserWorkspacesAsync();
-            
+
             if (loadResult.LoadSuccess)
             {
                 workspaces = loadResult.Workspaces;
@@ -137,19 +138,17 @@
 
     private async Task OpenCreateWorkspaceDialog()
     {
-        var parameters = new DialogParameters();
-        var options = new DialogOptions 
-        { 
-            CloseOnEscapeKey = true,
-            MaxWidth = MaxWidth.Small,
-            FullWidth = true,
-            BackdropClick = false
-        };
+        var result = await DialogService.OpenAsync<CreateWorkspaceDialog>("Create New Workspace",
+            options: new DialogOptions()
+            {
+                CloseDialogOnEsc = true,
+                Width = "400px",
+                Resizable = false,
+                Draggable = false,
+                CloseDialogOnOverlayClick = false
+            });
 
-        var dialog = await DialogService.ShowAsync<CreateWorkspaceDialog>("Create New Workspace", parameters, options);
-        var result = await dialog.Result;
-
-        if (!result.Canceled && result.Data is CreateWorkspaceDialog.CreateWorkspaceRequest request)
+        if (result is CreateWorkspaceDialog.CreateWorkspaceRequest request)
         {
             await HandleCreateWorkspace(request);
         }
@@ -157,23 +156,21 @@
 
     private async Task OpenDeleteWorkspaceDialog(WorkspaceDto workspace)
     {
-        var parameters = new DialogParameters
-        {
-            ["WorkspaceName"] = workspace.Name,
-            ["WorkspaceId"] = workspace.Id
-        };
-        var options = new DialogOptions()
-        {
-            CloseOnEscapeKey = true,
-            MaxWidth = MaxWidth.Small,
-            FullWidth = true,
-            BackdropClick = false
-        };
+        var result = await DialogService.OpenAsync<DeleteWorkspaceDialog>("Delete Workspace",
+            new Dictionary<string, object> {
+                { "WorkspaceName", workspace.Name },
+                { "WorkspaceId", workspace.Id }
+            },
+            new DialogOptions()
+            {
+                CloseDialogOnEsc = true,
+                Width = "400px",
+                Resizable = false,
+                Draggable = false,
+                CloseDialogOnOverlayClick = false
+            });
 
-        var dialog = await DialogService.ShowAsync<DeleteWorkspaceDialog>("Delete Workspace", parameters, options);
-        var result = await dialog.Result;
-
-        if (!result.Canceled && result.Data is DeleteWorkspaceDialog.DeleteWorkspaceRequest request)
+        if (result is DeleteWorkspaceDialog.DeleteWorkspaceRequest request)
         {
             await HandleDeleteWorkspace(workspace);
         }
@@ -184,9 +181,9 @@
         try
         {
             Logger.LogInformation("Creating workspace with name: {WorkspaceName}", request.Name);
-            
-            var createResult = await _workspacePageService.CreateNewUserWorkspaceAsync(request.Name,request.Description);
-            
+
+            var createResult = await _workspacePageService.CreateNewUserWorkspaceAsync(request.Name, request.Description);
+
             if (createResult.IsSuccess)
             {
                 if (createResult.WorkspaceDto != null)
@@ -194,19 +191,33 @@
                     workspaces.Add(createResult.WorkspaceDto);
                     StateHasChanged();
                 }
-                Snackbar.Add($"Workspace '{request.Name}' created successfully!", Severity.Success);
+                NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Success",
+                    Detail = $"Workspace '{request.Name}' created successfully!"
+                });
             }
             else
             {
-                Snackbar.Add($"Unexpected error occured when creating workspace", Severity.Error);
+                NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Error",
+                    Detail = "Unexpected error occured when creating workspace"
+                });
             }
         }
         catch (Exception ex)
         {
-            Snackbar.Add("An unexpected error occurred while creating the workspace", Severity.Error);
+            NotificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "Error",
+                Detail = "An unexpected error occurred while creating the workspace"
+            });
         }
     }
-    
 
     private async Task HandleDeleteWorkspace(WorkspaceDto workspace)
     {
@@ -218,16 +229,31 @@
             {
                 workspaces.Remove(workspace);
                 StateHasChanged();
-                Snackbar.Add($"Workspace '{workspace.Name} was deleted successfully", Severity.Success);
+                NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Success",
+                    Detail = $"Workspace '{workspace.Name}' was deleted successfully"
+                });
             }
             else
             {
-                Snackbar.Add("Unexpected error occured when attemptign to delete workspace", Severity.Error);
+                NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Error",
+                    Detail = "Unexpected error occured when attempting to delete workspace"
+                });
             }
         }
         catch (Exception ex)
         {
-            Snackbar.Add("An unexpected error occured while deleting the workspace", Severity.Error);
+            NotificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "Error",
+                Detail = "An unexpected error occured while deleting the workspace"
+            });
         }
     }
 

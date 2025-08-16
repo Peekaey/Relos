@@ -11,8 +11,8 @@
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.8" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.OAuth" Version="2.3.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
-        <PackageReference Include="MudBlazor" Version="8.11.0" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+        <PackageReference Include="Radzen.Blazor" Version="7.2.1" />
         <ProjectReference Include="..\..\Relos.Api\Relos.Api.csproj" />
         <ProjectReference Include="..\..\Relos.BusinessService\Relos.BusinessService.csproj" />
         <ProjectReference Include="..\..\Relos.DataService\Relos.DataService.csproj" />

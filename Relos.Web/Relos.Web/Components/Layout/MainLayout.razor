@@ -1,17 +1,11 @@
 ﻿@inherits LayoutComponentBase
 
-@* Required *@
-<MudThemeProvider />
-<MudPopoverProvider />
+@* Radzen Components - provides all necessary services *@
+<RadzenComponents @rendermode="InteractiveAuto" />
 
-@* Needed for dialogs *@
-<MudDialogProvider />
-
-@* Needed for snackbars *@
-<MudSnackbarProvider />
-
-<MudLayout Style="height: 100vh">
-    <MudMainContent Style="height: 100%; display: flex; flex-direction: column;">
+@* Radzen Layout equivalent *@
+<RadzenLayout Style="height: 100vh">
+    <RadzenBody Style="height: 100%; display: flex; flex-direction: column;">
         @Body
-    </MudMainContent>
-</MudLayout>
+    </RadzenBody>
+</RadzenLayout>

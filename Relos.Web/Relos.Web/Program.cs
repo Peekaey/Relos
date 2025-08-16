@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using MudBlazor.Services;
+using Radzen;
 using Relos.BusinessService;
 using Relos.BusinessService.DatabaseServices;
 using Relos.BusinessService.Interfaces;
@@ -83,8 +83,8 @@ public class Program
     private static void ConfigureServices(WebApplicationBuilder builder)
     {
         // Add services to the container.
+        builder.Services.AddRadzenComponents();
         builder.Services.AddRazorComponents().AddInteractiveServerComponents().AddInteractiveWebAssemblyComponents();
-        builder.Services.AddMudServices();
 
         builder.Services.AddControllers();
         builder.Services.AddHttpContextAccessor();
