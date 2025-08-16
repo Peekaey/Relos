@@ -1,0 +1,13 @@
+@inherits LayoutComponentBase
+
+<RadzenComponents @rendermode="InteractiveServer" />
+
+<RadzenLayout style="position: relative; height: 100vh; grid-template-areas: 'rz-sidebar rz-header' 'rz-sidebar rz-body'">
+    <SidebarWrapper @rendermode="InteractiveServer" />
+    
+    <RadzenBody>
+        <div class="rz-p-4">
+            @Body
+        </div>
+    </RadzenBody>
+</RadzenLayout>

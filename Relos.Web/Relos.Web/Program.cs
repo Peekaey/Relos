@@ -83,8 +83,8 @@ public class Program
     private static void ConfigureServices(WebApplicationBuilder builder)
     {
         // Add services to the container.
-        builder.Services.AddRadzenComponents();
         builder.Services.AddRazorComponents().AddInteractiveServerComponents().AddInteractiveWebAssemblyComponents();
+        builder.Services.AddRadzenComponents();
 
         builder.Services.AddControllers();
         builder.Services.AddHttpContextAccessor();

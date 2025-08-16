@@ -1,4 +1,5 @@
 @page "/workspaces"
+@using Microsoft.AspNetCore.Authorization
 @using Relos.Models.Results
 @using Radzen
 @using Radzen.Blazor
@@ -7,11 +8,14 @@
 @using Relos.Models.Dtos
 @using Relos.Models.Pages
 @using Relos.PageService.Interfaces
+@using Relos.Web.Components.Layout
 @inject IWorkspacePageService _workspacePageService
 @inject DialogService DialogService
 @inject NotificationService NotificationService
 @inject ILogger<Workspaces> Logger
 @rendermode InteractiveServer
+@attribute [Authorize]
+@layout MainLayout
 
 <PageTitle>Workspaces</PageTitle>
 
@@ -26,7 +30,7 @@
 
     <RadzenCard>
         <RadzenText TextStyle="TextStyle.H4" Class="rz-text-align-center rz-mb-4">
-            Please select the workspace
+            Select workspace
         </RadzenText>
 
         @if (isLoading)
@@ -50,9 +54,9 @@
         }
         else
         {
+            <RadzenRow Gap="1rem">
             @if (workspaces.Any())
             {
-                <RadzenRow Gap="1rem">
                     @foreach (var workspace in workspaces)
                     {
                         <RadzenColumn Size="12" SizeMD="6" SizeLG="4">
@@ -83,14 +87,38 @@
                             </RadzenCard>
                         </RadzenColumn>
                     }
-                </RadzenRow>
             }
-            else
-            {
-                <RadzenText Class="rz-text-align-center rz-p-8 rz-color-base-600">
-                    No workspaces found. Create your first workspace to get started!
-                </RadzenText>
-            }
+            <RadzenColumn Size="12" SizeMD="6" SizeLG="4">
+            <RadzenButton Click="@OpenCreateWorkspaceDialog" Disabled="@isLoading" Style="background: none; border: 2px dashed #ccc; cursor: pointer;">
+            <RadzenCard Style=""
+                        Class="rz-text-align-center">
+                <RadzenStack Gap="0.5rem" AlignItems="AlignItems.Center">
+                    <RadzenIcon Icon="add_circle_outline"
+                                Style="font-size: 32px;"
+                                Class="rz-color-primary"/>
+                    <RadzenText TextStyle="TextStyle.H6"
+                                Class="rz-color-primary">
+                        Create New Workspace
+                    </RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body2"
+                                Class="rz-color-base-600">
+                        Click to add a new workspace
+                    </RadzenText>
+                </RadzenStack>
+
+                <RadzenStack Orientation="Orientation.Horizontal"
+                             JustifyContent="JustifyContent.Center"
+                             Gap="0.5rem"
+                             Class="rz-mt-3">
+                    @* <RadzenButton Text="Create" *@
+                    @*               ButtonStyle="ButtonStyle.Primary" *@
+                    @*               Size="ButtonSize.Small" *@
+                    @*               Click="@OpenCreateWorkspaceDialog"/> *@
+                </RadzenStack>
+            </RadzenCard>
+            </RadzenButton>
+            </RadzenColumn>
+            </RadzenRow>
         }
     </RadzenCard>
 </RadzenStack>
