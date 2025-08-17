@@ -1,16 +1,48 @@
-@page "/Contacts"
-<h3>Contacts</h3>
+@page "/contacts"
+@inject DialogService DialogService
+@rendermode InteractiveServer
 
 <RadzenStack>
-    <RadzenStack Orientation="Orientation.Vertical">
-        <RadzenButton/>
+    <RadzenStack>
+        <RadzenButton Text="Add new Contact"
+                      ButtonSyle="ButtonStyle.Primary"
+                      Icon="add"
+                      Click="@OpenCreateContactDialog"
+                      Disabled="@isLoading"/>
+        @if (isLoading)
+        {
+            <RadzenCard Class="rz-text-align-center rz-p-8">
+                <RadzenProgressBarCircular ShowValue="false" Mode="ProgressBarMode.Indeterminate"/>
+                <RadzenText Class="rz-mt-2">Loading Contacts...</RadzenText>
+            </RadzenCard>
+        }
     </RadzenStack>
 </RadzenStack>
 
-
 @code {
+    private bool isLoading = false;
+    private string? loadError = null;
 
-    private async Task OpenCreateNewContactDialog()
+    private async Task OpenCreateContactDialog()
+    {
+        var result = await DialogService.OpenAsync<CreateContactDialog>("Create new Contact",
+            options: new DialogOptions()
+            {
+                CloseDialogOnEsc = true,
+                Width = "400px",
+                Resizable = false,
+                Draggable = false,
+                CloseDialogOnOverlayClick = false
+            });
+
+        if (result is CreateContactDialog.CreateContactRequest request)
+        {
+            await HandleCreateContact(request);
+        }
+
+    }
+
+    private async Task HandleCreateContact(CreateContactDialog.CreateContactRequest request)
     {
         
     }

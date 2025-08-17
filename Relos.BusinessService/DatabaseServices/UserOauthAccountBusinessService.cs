@@ -37,5 +37,11 @@ public class UserOauthAccountBusinessService : IUserOauthAccountBusinessService
             AvatarUrl = userOauthAccount.Avatar
         };
     }
+
+    public SaveResult UpdateLastLoginDate(int userOauthAccountId)
+    {
+        return _userOauthAccountService.UpdateLastLoginDate(userOauthAccountId);
+    }
+    
     
 }

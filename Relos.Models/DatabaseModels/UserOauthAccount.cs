@@ -16,6 +16,7 @@ public class UserOauthAccount : IBaseAuditable
     public string Uuid { get; set; }
     public string Username { get; set; }
     public string Avatar { get; set; }
+    public DateTime LastLoginDateUtc { get; set; }
     // IBaseAuditable
     public DateTime LastUpdatedDateTimeUtc { get; set; }
     public DateTime CreatedDateTimeUtc { get; set; }

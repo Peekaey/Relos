@@ -24,4 +24,30 @@ public class UserOauthAccountService : IUserOauthAccountService
     {
         return _dataContext.UserOauthAccounts.FirstOrDefault(x => x.Uuid == uuid);
     }
+
+    public SaveResult UpdateLastLoginDate(int userOauthAccountId)
+    {
+        UserOauthAccount? existingUserOauthAccount = _dataContext.UserOauthAccounts.FirstOrDefault(u => u.Id  == userOauthAccountId);
+        if (existingUserOauthAccount == null)
+        {
+            return SaveResult.AsUpdated();
+        }
+        
+        using (var transaction = _dataContext.Database.BeginTransaction())
+        {
+            try
+            {
+                existingUserOauthAccount.LastLoginDateUtc = DateTime.UtcNow;
+                _dataContext.UserOauthAccounts.Update(existingUserOauthAccount);
+                _dataContext.SaveChanges();
+                transaction.Commit();
+                return SaveResult.AsUpdated();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return SaveResult.AsFailure("Failed to update last login date");
+            }
+        }
+    }
 }

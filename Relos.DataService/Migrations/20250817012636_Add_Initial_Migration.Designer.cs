@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Relos.DataService;
@@ -11,9 +12,11 @@ using Relos.DataService;
 namespace Relos.DataService.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250817012636_Add_Initial_Migration")]
+    partial class Add_Initial_Migration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -113,9 +116,6 @@ namespace Relos.DataService.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedDateTimeUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("LastLoginDateUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("LastUpdatedDateTimeUtc")

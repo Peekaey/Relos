@@ -14,35 +14,35 @@ public class WorkspacePageService : IWorkspacePageService
 {
     private readonly ILogger<WorkspacePageService> _logger;
     private readonly IWorkspaceBusinessService  _workspaceBusinessService;
-    private readonly IAuthenticationStateProviderExtensions  _authenticationStateProviderExtensions;
+    private readonly IAuthExtensions  _authExtensions;
     private readonly AuthenticationStateProvider  _authenticationStateProvider;
     
     public WorkspacePageService(ILogger<WorkspacePageService> logger, IWorkspaceBusinessService workspaceBusinessService,
-        IAuthenticationStateProviderExtensions authenticationStateProviderExtensions, AuthenticationStateProvider authenticationStateProvider)
+        IAuthExtensions authExtensions, AuthenticationStateProvider authenticationStateProvider)
     {
         _logger = logger;
         _workspaceBusinessService = workspaceBusinessService;
-        _authenticationStateProviderExtensions = authenticationStateProviderExtensions;
+        _authExtensions = authExtensions;
         _authenticationStateProvider = authenticationStateProvider;
     }
 
-    public async Task<WorkspacesVm> GetUserWorkspacesAsync()
+    public async Task<WorkspacesPage> GetUserWorkspacesAsync()
     {
-        int? reloUserId = await _authenticationStateProviderExtensions.GetIdentityClaimReloUserIdAsInt();
+        int? reloUserId = await _authExtensions.GetIdentityClaimReloUserIdAsInt();
 
         if (reloUserId == null)
         {
-            WorkspacesVm.AsLoadFail();
+            WorkspacesPage.AsLoadFail();
         }
 
         List<WorkspaceDto> workspacesDtos = _workspaceBusinessService.GetWorkspacesByUserId(reloUserId.Value);
 
-        return WorkspacesVm.AsLoadSuccess(workspacesDtos);
+        return WorkspacesPage.AsLoadSuccess(workspacesDtos);
     }
 
-    public async Task<CreateWorkspaceSaveResult> CreateNewUserWorkspaceAsync(string workspaceName, string? workspaceDescription)
+    public async Task<CreateWorkspaceSaveResult> CreateNewWorkspaceAsync(string workspaceName, string? workspaceDescription)
     {
-        int? reloUserId = await _authenticationStateProviderExtensions.GetIdentityClaimReloUserIdAsInt();
+        int? reloUserId = await _authExtensions.GetIdentityClaimReloUserIdAsInt();
         if (reloUserId == null)
         {
             CreateWorkspaceSaveResult.AsFailure("Unable to determine User Id");
@@ -70,7 +70,7 @@ public class WorkspacePageService : IWorkspacePageService
 
     public async Task<SaveResult> DeleteWorkspaceAsync(int workspaceId)
     {
-        int? reloId = await _authenticationStateProviderExtensions.GetIdentityClaimReloUserIdAsInt();
+        int? reloId = await _authExtensions.GetIdentityClaimReloUserIdAsInt();
         if (reloId == null)
         {
            SaveResult.AsFailure("Unable to determine User Id");

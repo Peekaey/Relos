@@ -30,6 +30,7 @@ public class AuthenticationBusinessService : IAuthenticationBusinessService
 
         if (userOauthAccountDto != null)
         {
+            _userOauthAccountBusinessService.UpdateLastLoginDate(userOauthAccountDto.Id);
             return AuthenticateResult.AsSuccess(userOauthAccountDto.Id);
         }
         SaveResult saveNewUserResult = _userBusinessService.CreateAndSaveNewUser(provider, uuid, userName, avatar);
@@ -40,6 +41,7 @@ public class AuthenticationBusinessService : IAuthenticationBusinessService
         }
         return AuthenticateResult.AsSuccess(saveNewUserResult.CreatedIdValue);
     }
+    
     
     
     

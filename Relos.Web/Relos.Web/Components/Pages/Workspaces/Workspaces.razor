@@ -5,6 +5,7 @@
 @using Radzen.Blazor
 @using Relos.BusinessService.Interfaces
 @using Relos.DataService.Services
+@using Relos.Helpers.Authentication
 @using Relos.Models.Dtos
 @using Relos.Models.Pages
 @using Relos.PageService.Interfaces
@@ -13,9 +14,12 @@
 @inject DialogService DialogService
 @inject NotificationService NotificationService
 @inject ILogger<Workspaces> Logger
+@inject NavigationManager NavigationManager
+@inject IAuthExtensions AuthExtensions
 @rendermode InteractiveServer
 @attribute [Authorize]
 @layout MainLayout
+
 
 <PageTitle>Workspaces</PageTitle>
 
@@ -141,7 +145,7 @@
 
         try
         {
-            WorkspacesVm loadResult = await _workspacePageService.GetUserWorkspacesAsync();
+            WorkspacesPage loadResult = await _workspacePageService.GetUserWorkspacesAsync();
 
             if (loadResult.LoadSuccess)
             {
@@ -210,7 +214,7 @@
         {
             Logger.LogInformation("Creating workspace with name: {WorkspaceName}", request.Name);
 
-            var createResult = await _workspacePageService.CreateNewUserWorkspaceAsync(request.Name, request.Description);
+            var createResult = await _workspacePageService.CreateNewWorkspaceAsync(request.Name, request.Description);
 
             if (createResult.IsSuccess)
             {
@@ -285,8 +289,9 @@
         }
     }
 
-    private void OpenWorkspace(int workspaceId)
+    private async Task OpenWorkspace(int workspaceId)
     {
-        Logger.LogInformation("Opening workspace with ID: {WorkspaceId}", workspaceId);
+        await AuthExtensions.AddWorkSpaceIdToClaims(workspaceId);
+        NavigationManager.NavigateTo("/home");
     }
 }

@@ -12,8 +12,8 @@ using Relos.DataService;
 namespace Relos.DataService.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250814113040_Add_Initial_Migration")]
-    partial class Add_Initial_Migration
+    [Migration("20250817124440_Add_LastLoginDate_Column")]
+    partial class Add_LastLoginDate_Column
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,56 @@ namespace Relos.DataService.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Relos.Models.DatabaseModels.Contact", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ArchivedDateTimeUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedDateTimeUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("LastUpdatedDateTimeUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PrimaryNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("WorkspaceId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WorkspaceId");
+
+                    b.ToTable("Contacts");
+                });
 
             modelBuilder.Entity("Relos.Models.DatabaseModels.User", b =>
                 {
@@ -66,6 +116,9 @@ namespace Relos.DataService.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedDateTimeUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("LastLoginDateUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("LastUpdatedDateTimeUtc")
@@ -132,6 +185,17 @@ namespace Relos.DataService.Migrations
                     b.HasIndex("WorkspaceOwnerId");
 
                     b.ToTable("Workspaces");
+                });
+
+            modelBuilder.Entity("Relos.Models.DatabaseModels.Contact", b =>
+                {
+                    b.HasOne("Relos.Models.DatabaseModels.Workspace", "Workspace")
+                        .WithMany()
+                        .HasForeignKey("WorkspaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Workspace");
                 });
 
             modelBuilder.Entity("Relos.Models.DatabaseModels.UserOauthAccount", b =>

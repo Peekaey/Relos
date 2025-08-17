@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Relos.DataService.Interfaces;
+using Relos.Models.DatabaseModels;
 
 namespace Relos.DataService.Services;
 
@@ -14,6 +15,11 @@ public class ContactService : IContactService
         _logger = logger;
         _unitOfWork = unitOfWork;
         _dataContext = dataContext;
+    }
+
+    public IEnumerable<Contact> GetContactsByWorkspaceId(int workspaceId)
+    {
+        return _dataContext.Contacts.Where(c => c.WorkspaceId == workspaceId);
     }
     
     

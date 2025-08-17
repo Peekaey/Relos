@@ -6,6 +6,7 @@ public class AuthenticateResult : Result
     protected AuthenticateResult(bool isSuccess, int? userId, string errorMessage = "", string errorCode = "") 
         : base(isSuccess, errorCode)
     {
+        UserId = userId;
     }
 
     // Factory Method Pattern

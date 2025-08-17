@@ -57,6 +57,7 @@
 
     private async Task OnValidSubmit()
     {
+        // TODO Review and add validation logic if needed
         var request = new CreateWorkspaceRequest
         {
             Name = model.Name?.Trim() ?? string.Empty,

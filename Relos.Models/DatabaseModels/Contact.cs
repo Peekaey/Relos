@@ -24,5 +24,7 @@ public class Contact : ISystemArchivableAuditable
     public string PrimaryNumber { get; set; }
     public string CompanyName { get; set; }
     public string Address { get; set; }
+    public int WorkspaceId { get; set; }
+    public Workspace Workspace { get; set; }
     
 }

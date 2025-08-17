@@ -1,0 +1,103 @@
+@using System.ComponentModel.DataAnnotations
+@inject DialogService DialogService
+
+<RadzenTemplateForm TItem="CreateContactRequest" Data="@model" Submit="OnValidSubmit">
+    <DataAnnotationsValidator></DataAnnotationsValidator>
+    
+    <RadzenStack Gap="1rem">
+        <RadzenFormField Text="Name" Variant="Variant.Outlined">
+            <RadzenTextBox @bind-Value="@model.Name"
+                           Class="w-100"
+                           Placeholder="Enter contact name"
+                           Name="Name" />
+            <RadzenRequiredValidator Component="Name" Text="Contact name is required" />
+            <RadzenLengthValidator Component="Name" Max="100"
+                                   Text="Name length can't be more than 100 characters." />
+        </RadzenFormField>
+
+        <RadzenFormField Text="Email" Variant="Variant.Outlined">
+            <RadzenTextBox @bind-Value="@model.Email"
+                           Class="w-100"
+                           Placeholder="Enter email (optional)"
+                           Name="Email" />
+            <RadzenEmailValidator Component="Email" Text="Invalid email format." />
+        </RadzenFormField>
+
+        <RadzenFormField Text="Primary Number" Variant="Variant.Outlined">
+            <RadzenTextBox @bind-Value="@model.PrimaryNumber"
+                           Class="w-100"
+                           Placeholder="Enter primary number (optional)"
+                           Name="PrimaryNumber" />
+        </RadzenFormField>
+
+        <RadzenFormField Text="Company Name" Variant="Variant.Outlined">
+            <RadzenTextBox @bind-Value="@model.CompanyName"
+                           Class="w-100"
+                           Placeholder="Enter company name (optional)"
+                           Name="CompanyName" />
+        </RadzenFormField>
+
+        <RadzenFormField Text="Address" Variant="Variant.Outlined">
+            <RadzenTextArea @bind-Value="@model.Address"
+                            Rows="3"
+                            Class="w-100"
+                            Placeholder="Enter address (optional)"
+                            Name="Address" />
+        </RadzenFormField>
+
+    <RadzenStack Orientation="Orientation.Horizontal"
+                 JustifyContent="JustifyContent.End"
+                 Gap="0.5rem"
+                 Class="rz-mt-4">
+        <RadzenButton Text="Cancel"
+                      ButtonStyle="ButtonStyle.Light"
+                      Click="@Cancel" />
+        <RadzenButton Text="Create Contact"
+                      ButtonStyle="ButtonStyle.Primary"
+                      ButtonType="ButtonType.Submit" />
+    </RadzenStack>
+    </RadzenStack>
+</RadzenTemplateForm>
+
+@code {
+    private CreateContactRequest model = new();
+    
+    protected override void OnInitialized()
+    {
+        model = new CreateContactRequest();
+    }
+    
+    private void Cancel()
+    {
+        DialogService.Close(false);
+    }
+
+    private async Task OnValidSubmit()
+    {
+        var request = new CreateContactRequest
+        {
+            Name = model.Name?.Trim() ?? string.Empty,
+            Email = model.Email?.Trim() ?? string.Empty,
+            PrimaryNumber = model.PrimaryNumber?.Trim() ?? string.Empty,
+            CompanyName = model.CompanyName?.Trim() ?? string.Empty,
+            Address = model.Address?.Trim() ?? string.Empty
+        };
+
+        DialogService.Close(request);
+    }
+    
+
+
+    public class CreateContactRequest {
+    [Required]
+    [StringLength(100, ErrorMessage = "Name length can't be more than 100 characters.")]
+    public string Name { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string PrimaryNumber { get; set; } = string.Empty;
+    public string CompanyName { get; set; } = string.Empty;
+    public string Address { get; set; } = string.Empty;
+    
+}
+
+
+}

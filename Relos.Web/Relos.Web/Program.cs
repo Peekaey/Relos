@@ -112,7 +112,7 @@ public class Program
         builder.Services.AddScoped<IContactService, ContactService>();
         builder.Services.AddScoped<IContactBusinessService, ContactBusinessService>();
         builder.Services.AddScoped<IContactPageService, ContactPageService>();
-        builder.Services.AddScoped<IAuthenticationStateProviderExtensions, AuthenticationStateProviderExtensions>();
+        builder.Services.AddScoped<IAuthExtensions, AuthExtensions>();
     }
 
     private static void ConfigureLogging(WebApplicationBuilder builder)
