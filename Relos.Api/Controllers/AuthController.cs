@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Relos.Helpers.Authentication;
 
 namespace Relos.Api.Controllers;
 
@@ -12,10 +13,12 @@ namespace Relos.Api.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly ILogger<AuthController> _logger;
+    private readonly IAuthExtensions _authExtensions;
 
-    public AuthController(ILogger<AuthController> logger)
+    public AuthController(ILogger<AuthController> logger, IAuthExtensions authExtensions)
     {
         _logger = logger;
+        _authExtensions = authExtensions;
     }
 
     
@@ -67,5 +70,20 @@ public class AuthController : ControllerBase
 
         return Ok(new { IsAuthenticated = false });
     }
+    
+    [HttpGet("set-workspace/{workspaceId}")]
+    public async Task<IActionResult> SelectWorkspace(int workspaceId)
+    {
+        try
+        {
+            await _authExtensions.AddWorkSpaceIdToClaims(workspaceId);
+            return Redirect("/home");
+        }
+        catch (Exception ex)
+        {
+            return Redirect("/error");
+        }
+    }
+    
 
 }

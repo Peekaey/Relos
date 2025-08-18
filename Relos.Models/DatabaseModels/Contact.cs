@@ -18,7 +18,6 @@ public class Contact : ISystemArchivableAuditable
     // IBaseArchivable
     public bool IsArchived { get; set; }
     public DateTime? ArchivedDateTimeUtc { get; set; }
-    
     public string Name { get; set; }
     public string Email { get; set; }
     public string PrimaryNumber { get; set; }
@@ -26,5 +25,6 @@ public class Contact : ISystemArchivableAuditable
     public string Address { get; set; }
     public int WorkspaceId { get; set; }
     public Workspace Workspace { get; set; }
-    
+    public int CreatedByUserId { get; set; }
+    public User CreatedByUser { get; set; }
 }

@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Relos.DataService.Migrations
 {
     /// <inheritdoc />
-    public partial class Add_Initial_Migration : Migration
+    public partial class Add_Initial_Migrations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -39,6 +39,7 @@ namespace Relos.DataService.Migrations
                     Uuid = table.Column<string>(type: "text", nullable: false),
                     Username = table.Column<string>(type: "text", nullable: false),
                     Avatar = table.Column<string>(type: "text", nullable: false),
+                    LastLoginDateUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     LastUpdatedDateTimeUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedDateTimeUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -95,11 +96,18 @@ namespace Relos.DataService.Migrations
                     PrimaryNumber = table.Column<string>(type: "text", nullable: false),
                     CompanyName = table.Column<string>(type: "text", nullable: false),
                     Address = table.Column<string>(type: "text", nullable: false),
-                    WorkspaceId = table.Column<int>(type: "integer", nullable: false)
+                    WorkspaceId = table.Column<int>(type: "integer", nullable: false),
+                    CreatedByUserId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Contacts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Contacts_Users_CreatedByUserId",
+                        column: x => x.CreatedByUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Contacts_Workspaces_WorkspaceId",
                         column: x => x.WorkspaceId,
@@ -107,6 +115,11 @@ namespace Relos.DataService.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Contacts_CreatedByUserId",
+                table: "Contacts",
+                column: "CreatedByUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Contacts_WorkspaceId",

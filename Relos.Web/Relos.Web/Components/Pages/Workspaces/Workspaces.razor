@@ -8,9 +8,10 @@
 @using Relos.Helpers.Authentication
 @using Relos.Models.Dtos
 @using Relos.Models.Pages
+@using Relos.Models.RequestDtos
 @using Relos.PageService.Interfaces
 @using Relos.Web.Components.Layout
-@inject IWorkspacePageService _workspacePageService
+@inject IWorkspacePageService WorkspacePageService
 @inject DialogService DialogService
 @inject NotificationService NotificationService
 @inject ILogger<Workspaces> Logger
@@ -18,9 +19,9 @@
 @inject IAuthExtensions AuthExtensions
 @rendermode InteractiveServer
 @attribute [Authorize]
+@inject HttpClient HttpClient
+@inject IHttpContextAccessor HttpContextAccessor
 @layout MainLayout
-
-
 <PageTitle>Workspaces</PageTitle>
 
 <RadzenStack Gap="1.5rem">
@@ -145,7 +146,7 @@
 
         try
         {
-            WorkspacesPage loadResult = await _workspacePageService.GetUserWorkspacesAsync();
+            WorkspacesPage loadResult = await WorkspacePageService.GetUserWorkspacesAsync();
 
             if (loadResult.LoadSuccess)
             {
@@ -180,7 +181,7 @@
                 CloseDialogOnOverlayClick = false
             });
 
-        if (result is CreateWorkspaceDialog.CreateWorkspaceRequest request)
+        if (result is CreateWorkspaceRequest request)
         {
             await HandleCreateWorkspace(request);
         }
@@ -208,13 +209,13 @@
         }
     }
 
-    private async Task HandleCreateWorkspace(CreateWorkspaceDialog.CreateWorkspaceRequest request)
+    private async Task HandleCreateWorkspace(CreateWorkspaceRequest request)
     {
         try
         {
             Logger.LogInformation("Creating workspace with name: {WorkspaceName}", request.Name);
 
-            var createResult = await _workspacePageService.CreateNewWorkspaceAsync(request.Name, request.Description);
+            var createResult = await WorkspacePageService.CreateNewWorkspaceAsync(request.Name, request.Description);
 
             if (createResult.IsSuccess)
             {
@@ -222,13 +223,13 @@
                 {
                     workspaces.Add(createResult.WorkspaceDto);
                     StateHasChanged();
+                    NotificationService.Notify(new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Success,
+                        Summary = "Success",
+                        Detail = $"Workspace '{request.Name}' created successfully!"
+                    });
                 }
-                NotificationService.Notify(new NotificationMessage
-                {
-                    Severity = NotificationSeverity.Success,
-                    Summary = "Success",
-                    Detail = $"Workspace '{request.Name}' created successfully!"
-                });
             }
             else
             {
@@ -255,7 +256,7 @@
     {
         try
         {
-            SaveResult deleteResult = await _workspacePageService.DeleteWorkspaceAsync(workspace.Id);
+            SaveResult deleteResult = await WorkspacePageService.DeleteWorkspaceAsync(workspace.Id);
 
             if (deleteResult.WasDeleted)
             {
@@ -291,7 +292,7 @@
 
     private async Task OpenWorkspace(int workspaceId)
     {
-        await AuthExtensions.AddWorkSpaceIdToClaims(workspaceId);
-        NavigationManager.NavigateTo("/home");
+        // await AuthExtensions.AddWorkSpaceIdToClaims(workspaceId);
+        NavigationManager.NavigateTo($"api/v1/auth/set-workspace/{workspaceId}", forceLoad: true);
     }
 }

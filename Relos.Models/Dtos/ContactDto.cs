@@ -8,5 +8,6 @@ public class ContactDto
     public string PrimaryNumber { get; set; }
     public string CompanyName { get; set; }
     public string Address { get; set; }
+    public int CreatedByUserId { get; set; }
     
 }

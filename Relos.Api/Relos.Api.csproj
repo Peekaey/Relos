@@ -18,4 +18,8 @@
       </Reference>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Relos.Helpers\Relos.Helpers.csproj" />
+    </ItemGroup>
+
 </Project>

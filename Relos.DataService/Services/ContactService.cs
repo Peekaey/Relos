@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Relos.DataService.Interfaces;
 using Relos.Models.DatabaseModels;
+using Relos.Models.Results;
 
 namespace Relos.DataService.Services;
 
@@ -20,6 +21,26 @@ public class ContactService : IContactService
     public IEnumerable<Contact> GetContactsByWorkspaceId(int workspaceId)
     {
         return _dataContext.Contacts.Where(c => c.WorkspaceId == workspaceId);
+    }
+
+    public SaveResult SaveNewContact(Contact contact)
+    {
+        using (var transaction = _dataContext.Database.BeginTransaction())
+        {
+            try
+            {
+                _dataContext.Contacts.Add(contact);
+                _dataContext.SaveChanges();
+                int newContactId = contact.Id;
+                transaction.Commit();
+                return SaveResult.AsCreated(newContactId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return SaveResult.AsFailure("Failed to create contact");
+            }
+        }
     }
     
     

@@ -3,6 +3,7 @@ using Relos.BusinessService.Interfaces;
 using Relos.DataService.Interfaces;
 using Relos.Models.DatabaseModels;
 using Relos.Models.Dtos;
+using Relos.Models.Results;
 
 namespace Relos.BusinessService.DatabaseServices;
 
@@ -32,7 +33,22 @@ public class ContactBusinessService : IContactBusinessService
         }).ToList();
         
         return contactDtos;
+    }
 
+    public SaveResult CreateNewContact(ContactDto contactDto, int workspaceId, int userId)
+    {
+        Contact contact = new Contact
+        {
+            Name = contactDto.Name,
+            Email = contactDto.Email,
+            PrimaryNumber = contactDto.PrimaryNumber,
+            CompanyName = contactDto.CompanyName,
+            Address = contactDto.Address,
+            CreatedByUserId = userId,
+            WorkspaceId = workspaceId
+        };
+
+        return _contactService.SaveNewContact(contact);
     }
     
 }

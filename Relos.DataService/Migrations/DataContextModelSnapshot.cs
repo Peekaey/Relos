@@ -41,6 +41,9 @@ namespace Relos.DataService.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("CreatedByUserId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("CreatedDateTimeUtc")
                         .HasColumnType("timestamp with time zone");
 
@@ -66,6 +69,8 @@ namespace Relos.DataService.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatedByUserId");
 
                     b.HasIndex("WorkspaceId");
 
@@ -186,11 +191,19 @@ namespace Relos.DataService.Migrations
 
             modelBuilder.Entity("Relos.Models.DatabaseModels.Contact", b =>
                 {
+                    b.HasOne("Relos.Models.DatabaseModels.User", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Relos.Models.DatabaseModels.Workspace", "Workspace")
                         .WithMany()
                         .HasForeignKey("WorkspaceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("CreatedByUser");
 
                     b.Navigation("Workspace");
                 });

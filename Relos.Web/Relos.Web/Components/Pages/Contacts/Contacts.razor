@@ -1,6 +1,19 @@
 @page "/contacts"
+@using System.Collections.ObjectModel
+@using Microsoft.AspNetCore.Authorization
+@using Relos.Models.DatabaseModels
+@using Relos.Models.Dtos
+@using Relos.Models.Pages
+@using Relos.Models.RequestDtos
+@using Relos.PageService.Interfaces
+@using Relos.Web.Components.Layout
 @inject DialogService DialogService
 @rendermode InteractiveServer
+@inject ILogger<Contacts> Logger
+@inject IContactPageService ContactPageService
+@inject NotificationService NotificationService
+@layout MainLayout
+@attribute [Authorize]
 
 <RadzenStack>
     <RadzenStack>
@@ -16,12 +29,114 @@
                 <RadzenText Class="rz-mt-2">Loading Contacts...</RadzenText>
             </RadzenCard>
         }
+        else
+        {
+            <RadzenDataGrid @ref="contactsGrid" TItem="ContactDto"
+                            ColumnWidth="300px"
+                             Count="@totalCount" LoadData="@OnLoadContacts" Data="@contacts">
+                <Columns>
+                <RadzenDataGridColumn TItem="ContactDto" Context="data" Property="@nameof(ContactDto.Id)" Title="Id"></RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="ContactDto" Context="data" Property="@nameof(ContactDto.Name)" Title="Name"></RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="ContactDto" Context="data" Property="@nameof(ContactDto.Email)" Title="Email"></RadzenDataGridColumn>
+            </Columns>
+            </RadzenDataGrid>
+        }
     </RadzenStack>
 </RadzenStack>
 
 @code {
+    // https://stackoverflow.com/questions/69863695/blazor-radzen-grid-doesnt-show-any-data
+    private RadzenDataGrid<ContactDto> contactsGrid;
+    private List<ContactDto> contacts = new List<ContactDto>();
     private bool isLoading = false;
     private string? loadError = null;
+    private int totalCount = 0;
+    
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadContacts();
+    }
+
+    private async Task OnLoadContacts(LoadDataArgs args)
+    {
+        Logger.LogInformation("OnLoadContacts called with Skip: {Skip}, Top: {Top}", args.Skip, args.Top);
+        
+        isLoading = true;
+        loadError = null;
+
+        try
+        {
+            ContactsPage loadResult = await ContactPageService.GetContactsForWorkspaceAsync();
+
+            if (loadResult.LoadSuccess && loadResult.Contacts != null)
+            {
+                Logger.LogInformation("Successfully loaded {Count} contacts from service", loadResult.Contacts.Count);
+                
+                // Set the data for the grid
+                var allContacts = loadResult.Contacts;
+                totalCount = allContacts.Count;
+                
+                // Apply paging if needed
+                contacts = allContacts
+                    .Skip(args.Skip ?? 0)
+                    .Take(args.Top ?? totalCount)
+                    .ToList();
+                
+                Logger.LogInformation("Showing {Count} contacts on current page", contacts.Count);
+            }
+            else
+            {
+                loadError = "Failed to load contacts from the service";
+                Logger.LogWarning("ContactPageService returned LoadSuccess = false or null contacts");
+                contacts = new List<ContactDto>();
+                totalCount = 0;
+            }
+        }
+        catch (Exception ex)
+        {
+            loadError = $"An unexpected error occurred while loading contacts: {ex.Message}";
+            Logger.LogError(ex, "Exception occurred while loading contacts");
+            contacts = new List<ContactDto>();
+            totalCount = 0;
+        }
+        finally
+        {
+            isLoading = false;
+            Logger.LogInformation("OnLoadContacts completed. Contacts count: {Count}, Total: {Total}", contacts.Count, totalCount);
+        }
+    }
+
+    private async Task LoadContacts()
+    {
+        isLoading = true;
+        loadError = null;
+        StateHasChanged();
+
+        try
+        {
+            ContactsPage loadResult = await ContactPageService.GetContactsForWorkspaceAsync();
+
+            if (loadResult.LoadSuccess)
+            {
+                contacts = loadResult.Contacts;
+            }
+            else
+            {
+                loadError = "Unexpected occur occured when loading contacts";
+            }
+        }
+        catch (Exception ex)
+        {
+            loadError = "An unexpected error occured while loading contacts";
+            Logger.LogError(ex, "Exception occured while loading contacts");
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
 
     private async Task OpenCreateContactDialog()
     {
@@ -35,16 +150,53 @@
                 CloseDialogOnOverlayClick = false
             });
 
-        if (result is CreateContactDialog.CreateContactRequest request)
+        if (result is CreateContactRequest request)
         {
             await HandleCreateContact(request);
         }
 
     }
 
-    private async Task HandleCreateContact(CreateContactDialog.CreateContactRequest request)
+    private async Task HandleCreateContact(CreateContactRequest request)
     {
-        
+        try
+        {
+            Logger.LogInformation("Creating contact with name: {ContactName}", request.Name);
+            var createResult = await ContactPageService.CrateNewContactAsync(request);
+
+            if (createResult.IsSuccess)
+            {
+                if (createResult.ContactDto != null)
+                {
+                    contacts.Add(createResult.ContactDto);
+                    StateHasChanged();
+                    NotificationService.Notify(new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Success,
+                        Summary = "Success",
+                        Detail = $"Contact '{request.Name}' created successfully!"
+                    });
+                }
+            }
+            else
+            {
+                NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Error",
+                    Detail = "Unexpected error occured when creating contact"
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            NotificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "Error",
+                Detail = "An unexpected error occured while creating the workspace"
+            });
+        }
     }
     
 }
