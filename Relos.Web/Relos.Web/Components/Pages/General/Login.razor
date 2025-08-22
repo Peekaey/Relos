@@ -5,17 +5,20 @@
 
 <PageTitle>Login</PageTitle>
 
-<RadzenStack AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Start" 
-             Style="height: 100vh; margin-top: 25vh" Class="rz-p-4">
-    <RadzenText TextStyle="TextStyle.H5">Sign In with</RadzenText>
-    
-    <RadzenCard Style="margin-top: 1.5em">
-        <RadzenLink Path="/api/v1/auth/github/signin">
-            <RadzenButton Style="background: none;">
-                <RadzenImage Path="images/github-logo.svg" AlternateText="Github Logo" 
-                             Style="width: 32px; height: 32px" />
-            </RadzenButton>
-        </RadzenLink>
+<RadzenStack AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Start" Style="margin-top: 20vh" Class="rz-p-4">
+    <RadzenImage Path="images/Relos.svg" Style="width: 20em;"></RadzenImage>
+    <RadzenText TextStyle="TextStyle.H5" Style="">Sign In with</RadzenText>
+    <RadzenCard Style="margin-top: 1em">
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="1em" AlignItems="AlignItems.Center">
+            <RadzenLink Path="/api/v1/auth/github/signin">
+                <RadzenImage Path="images/github-logo.svg" AlternateText="Github Logo"
+                             Style="width: 32px; height: 32px"/>
+            </RadzenLink>
+            <RadzenLink Path="/api/v1/auth/google/signin">
+                <RadzenImage Path="images/Google.png" AlternateText="Google Logo"
+                             Style="width: 32px; height: 32px"/>
+            </RadzenLink>
+        </RadzenStack>
     </RadzenCard>
 </RadzenStack>
 

@@ -86,5 +86,11 @@ public class AuthExtensions : IAuthExtensions
         }
         return int.TryParse(workspaceIdString, out int workspaceId) ? workspaceId : null;
     }
+
+    public async Task<string> GetIdentifyClaimAvatar()
+    {
+        string? claimAvatar = _authenticationStateProvider.GetAuthenticationStateAsync().Result.User.Claims.FirstOrDefault(c => c.Type == "Avatar_url")?.Value;
+        return claimAvatar ?? string.Empty;
+    }
     
 }

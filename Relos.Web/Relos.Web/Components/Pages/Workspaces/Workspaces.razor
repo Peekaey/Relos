@@ -25,15 +25,8 @@
 <PageTitle>Workspaces</PageTitle>
 
 <RadzenStack Gap="1.5rem">
-    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
-        <RadzenButton Text="Create new Workspace"
-                     ButtonStyle="ButtonStyle.Primary"
-                     Icon="add"
-                     Click="@OpenCreateWorkspaceDialog"
-                     Disabled="@isLoading" />
-    </RadzenStack>
-
-    <RadzenCard>
+    
+    <RadzenCard Style="background:none; box-shadow: none;">
         <RadzenText TextStyle="TextStyle.H4" Class="rz-text-align-center rz-mb-4">
             Select workspace
         </RadzenText>
@@ -68,7 +61,7 @@
                             <RadzenCard>
                                 <RadzenStack Gap="0.5rem">
                                     <RadzenText TextStyle="TextStyle.H6">@workspace.Name</RadzenText>
-                                    <RadzenText TextStyle="TextStyle.Body2" Class="rz-color-base-600">
+                                    <RadzenText TextStyle="TextStyle.Body2" Class="rz-color-base-600" Style="height: 1.2em; line-height: 1.2em;">
                                         @workspace.Description
                                     </RadzenText>
                                     <RadzenText TextStyle="TextStyle.Caption" Class="rz-color-base-500">
@@ -94,9 +87,8 @@
                     }
             }
             <RadzenColumn Size="12" SizeMD="6" SizeLG="4">
-            <RadzenButton Click="@OpenCreateWorkspaceDialog" Disabled="@isLoading" Style="background: none; border: 2px dashed #ccc; cursor: pointer;">
-            <RadzenCard Style=""
-                        Class="rz-text-align-center">
+            <RadzenCard Class="rz-text-align-center" Style="">
+                <RadzenButton Click="@OpenCreateWorkspaceDialog" Disabled="@isLoading" Style="cursor: pointer; box-shadow: none; background: white; padding-bottom: 0.75em;">
                 <RadzenStack Gap="0.5rem" AlignItems="AlignItems.Center">
                     <RadzenIcon Icon="add_circle_outline"
                                 Style="font-size: 32px;"
@@ -115,13 +107,9 @@
                              JustifyContent="JustifyContent.Center"
                              Gap="0.5rem"
                              Class="rz-mt-3">
-                    @* <RadzenButton Text="Create" *@
-                    @*               ButtonStyle="ButtonStyle.Primary" *@
-                    @*               Size="ButtonSize.Small" *@
-                    @*               Click="@OpenCreateWorkspaceDialog"/> *@
                 </RadzenStack>
+                </RadzenButton>
             </RadzenCard>
-            </RadzenButton>
             </RadzenColumn>
             </RadzenRow>
         }

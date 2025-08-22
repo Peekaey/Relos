@@ -7,4 +7,5 @@ public interface IAuthExtensions
     Task AddWorkSpaceIdToClaims(int workspaceId);
     Task<string> GetIdentityClaimWorkspaceId();
     Task<int?> GetIdentityClaimWorkspaceIdAsInt();
+    Task<string> GetIdentifyClaimAvatar();
 }

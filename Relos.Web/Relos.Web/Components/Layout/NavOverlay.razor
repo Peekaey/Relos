@@ -1,0 +1,143 @@
+@using Relos.Helpers.Authentication
+@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+@inject IAuthExtensions AuthExtensions
+
+@* TODO Put these into proper css files *@
+<style>
+    .mobile-nav-button .rz-button-text {
+        display: inline;
+    }
+    
+    .search-container {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        max-width: 600px;
+        z-index: 1;
+    }
+
+    .search-input {
+        width: 100%;
+    }
+
+
+    @@media (max-width: 1300px) and (min-width: 769px) {
+        .search-container {
+            max-width: 400px;
+        }
+    }
+    
+    @@media (max-width: 1000px) and (min-width: 769px) {
+        .search-container {
+            max-width: 300px; 
+        }
+    }
+    
+    @@media (max-width: 900px) and (min-width: 769px) {
+        .search-container {
+            max-width: 200px;
+        }
+    }
+
+    /* Mobile screens */
+    @@media (max-width: 768px) {
+        .mobile-nav-button .rz-button-text {
+            display: none;
+        }
+
+        .mobile-header-stack {
+            gap: 0.5rem !important;
+        }
+
+        .mobile-nav-stack {
+            gap: 1rem !important;
+        }
+
+        .search-container {
+            max-width: 150px;
+            transform: translateX(-40%);
+        }
+    }
+</style>
+
+<RadzenLayout>
+    <RadzenHeader>
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween" class="rz-p-4 mobile-header-stack" Style="position: relative;">
+            
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="4rem" class="mobile-nav-stack">
+                <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="inbox" Text="Inbox" Click="@(() => NavigateToInbox())" class="mobile-nav-button" Style="background:none; box-shadow: none; color: white"/>
+                <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="contacts" Text="Contacts" Click="@(() => NavigateToContacts())" class="mobile-nav-button" Style="background:none; box-shadow: none; color: white"/>
+            </RadzenStack>
+
+            <div class="search-container">
+                <RadzenTextBox @bind-Value="@searchQuery" @onkeypress="@OnSearchKeyPress" Placeholder="Search..." class="search-input">
+                </RadzenTextBox>
+            </div>
+            
+            <RadzenProfileMenu>
+                <Template>
+                    <RadzenImage Path="@AvatarUrl" Style="height: 40px; width: 40px; border-radius: 25px;"/>
+                </Template>
+                <ChildContent>
+                    <RadzenProfileMenuItem Text="Settings" Path="settings" Icon="Settings"></RadzenProfileMenuItem>
+                    <RadzenProfileMenuItem Text="Change Workspace" Path="workspaces" Icon="interactive_space"></RadzenProfileMenuItem>
+                    @if (IsDarkMode == true)
+                    {
+                        <RadzenProfileMenuItem Text="Swap Theme" Path="dialog" Icon="light_mode"></RadzenProfileMenuItem>
+                    }
+                    else
+                    {
+                        <RadzenProfileMenuItem Text="Swap Theme" Path="theme" Icon="dark_mode"></RadzenProfileMenuItem>
+                    }
+                    <RadzenProfileMenuItem Text="Log out" Path="logout" Icon="logout"></RadzenProfileMenuItem>
+                </ChildContent>
+            </RadzenProfileMenu>
+        </RadzenStack>
+    </RadzenHeader>
+    <RadzenBody>
+        @Body
+    </RadzenBody>
+</RadzenLayout>
+
+@code {
+    private string searchQuery = "";
+    private string AvatarUrl = "images/default-avatar.jpg";
+    private bool IsDarkMode = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var avatarUrl = await AuthExtensions.GetIdentifyClaimAvatar();
+        if (!string.IsNullOrEmpty(avatarUrl))
+        {
+            AvatarUrl = avatarUrl;
+        }
+    }
+
+    private void NavigateToInbox()
+    {
+        NavigationManager.NavigateTo("/inbox");
+    }
+
+    private void NavigateToContacts()
+    {
+        NavigationManager.NavigateTo("/contacts");
+    }
+
+    private void OnSearch()
+    {
+        if (!string.IsNullOrWhiteSpace(searchQuery))
+        {
+            NavigationManager.NavigateTo($"/search?q={Uri.EscapeDataString(searchQuery)}");
+        }
+    }
+
+    private void OnSearchKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            OnSearch();
+        }
+    }
+}
