@@ -87,7 +87,7 @@
                     }
             }
             <RadzenColumn Size="12" SizeMD="6" SizeLG="4">
-            <RadzenCard Class="rz-text-align-center" Style="">
+            <RadzenCard Class="rz-text-align-center" Style="padding-bottom: 27px;">
                 <RadzenButton Click="@OpenCreateWorkspaceDialog" Disabled="@isLoading" Style="cursor: pointer; box-shadow: none; background: white; padding-bottom: 0.75em;">
                 <RadzenStack Gap="0.5rem" AlignItems="AlignItems.Center">
                     <RadzenIcon Icon="add_circle_outline"
@@ -178,7 +178,8 @@
     private async Task OpenDeleteWorkspaceDialog(WorkspaceDto workspace)
     {
         var result = await DialogService.OpenAsync<DeleteWorkspaceDialog>("Delete Workspace",
-            new Dictionary<string, object> {
+            new Dictionary<string, object> 
+            {
                 { "WorkspaceName", workspace.Name },
                 { "WorkspaceId", workspace.Id }
             },
@@ -191,7 +192,7 @@
                 CloseDialogOnOverlayClick = false
             });
 
-        if (result is DeleteWorkspaceDialog.DeleteWorkspaceRequest request)
+        if (result is DeleteWorkspaceRequest request)
         {
             await HandleDeleteWorkspace(workspace);
         }

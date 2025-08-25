@@ -1,0 +1,10 @@
+@page "/logout"
+@inject NavigationManager NavigationManager
+@code {
+    
+    protected override async Task OnInitializedAsync()
+    {
+        NavigationManager.NavigateTo($"api/v1/auth/logout", forceLoad: true);
+    }
+
+}

@@ -7,4 +7,6 @@ public interface IContactBusinessService
 {
     List<ContactDto> GetContactsByWorkspaceId(int workspaceId);
     SaveResult CreateNewContact(ContactDto contactDto, int workspaceId, int userId);
+    ContactDto? GetContactDtoById(int contactId);
+    SaveResult DeleteContact(int contactId);
 }

@@ -2,6 +2,8 @@
 @inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
 @inject IAuthExtensions AuthExtensions
+@rendermode InteractiveServer
+
 
 @* TODO Put these into proper css files *@
 <style>
@@ -83,14 +85,6 @@
                 <ChildContent>
                     <RadzenProfileMenuItem Text="Settings" Path="settings" Icon="Settings"></RadzenProfileMenuItem>
                     <RadzenProfileMenuItem Text="Change Workspace" Path="workspaces" Icon="interactive_space"></RadzenProfileMenuItem>
-                    @if (IsDarkMode == true)
-                    {
-                        <RadzenProfileMenuItem Text="Swap Theme" Path="dialog" Icon="light_mode"></RadzenProfileMenuItem>
-                    }
-                    else
-                    {
-                        <RadzenProfileMenuItem Text="Swap Theme" Path="theme" Icon="dark_mode"></RadzenProfileMenuItem>
-                    }
                     <RadzenProfileMenuItem Text="Log out" Path="logout" Icon="logout"></RadzenProfileMenuItem>
                 </ChildContent>
             </RadzenProfileMenu>
@@ -101,11 +95,12 @@
     </RadzenBody>
 </RadzenLayout>
 
+<RadzenDialog></RadzenDialog>
+
 @code {
     private string searchQuery = "";
     private string AvatarUrl = "images/default-avatar.jpg";
-    private bool IsDarkMode = false;
-
+    
     protected override async Task OnInitializedAsync()
     {
         var avatarUrl = await AuthExtensions.GetIdentifyClaimAvatar();

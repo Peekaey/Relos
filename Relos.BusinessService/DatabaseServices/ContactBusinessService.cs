@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Relos.BusinessService.Interfaces;
 using Relos.DataService.Interfaces;
+using Relos.Helpers.Extensions;
 using Relos.Models.DatabaseModels;
 using Relos.Models.Dtos;
 using Relos.Models.Results;
@@ -37,7 +38,7 @@ public class ContactBusinessService : IContactBusinessService
 
     public SaveResult CreateNewContact(ContactDto contactDto, int workspaceId, int userId)
     {
-        Contact contact = new Contact
+        Contact contact = new Contact(userId)
         {
             Name = contactDto.Name,
             Email = contactDto.Email,
@@ -49,6 +50,50 @@ public class ContactBusinessService : IContactBusinessService
         };
 
         return _contactService.SaveNewContact(contact);
+    }
+
+    public ContactDto? GetContactDtoById(int contactId)
+    {
+        Contact? contact = _contactService.GetContactForVmById(contactId);
+
+        if (contact == null)
+        {
+            return null;
+        }
+
+        return new ContactDto
+        {
+            Id = contact.Id,
+            Name = contact.Name,
+            Email = contact.Email,
+            PrimaryNumber = contact.PrimaryNumber,
+            CompanyName = contact.CompanyName,
+            Address = contact.Address,
+            CreatedByUser = contact.CreatedByUser,
+            CreatedOn = contact.CreatedDateTimeUtc,
+            LastUpdatedByUser = contact.LastUpdatedByUser,
+            LastUpdatedOn = contact.LastUpdatedDateTimeUtc,
+        };
+    }
+
+    public SaveResult DeleteContact(int contactId)
+    {
+        Contact? contact = _contactService.GetContactForVmById(contactId);
+        bool deleteSuccess = false;
+        if (contact == null)
+        {
+            return SaveResult.AsDeleted();
+        }
+
+        SaveResult deleteResult = _contactService.DeleteContact(contact);
+
+        if (deleteResult.WasDeleted == false)
+        {
+            return SaveResult.AsFailure("Failed to delete contact");
+        }
+        
+        return SaveResult.AsDeleted();
+
     }
     
 }

@@ -5,6 +5,7 @@ using Relos.Models.Dtos;
 using Relos.Models.Pages;
 using Relos.Models.RequestDtos;
 using Relos.Models.Results;
+using Relos.Models.ViewModels;
 using Relos.PageService.Interfaces;
 
 namespace Relos.PageService;
@@ -47,7 +48,7 @@ public class ContactPageService : IContactPageService
         return  _contactBusinessService.GetContactsByWorkspaceId(workspaceId.Value);
     }
 
-    public async Task<CreateContactSaveResult> CrateNewContactAsync(CreateContactRequest createContactRequest)
+    public async Task<CreateContactSaveResult> CreateNewContactAsync(CreateContactRequest createContactRequest)
     {
         int? workspaceId = await _authExtensions.GetIdentityClaimWorkspaceIdAsInt();
 
@@ -70,7 +71,6 @@ public class ContactPageService : IContactPageService
             PrimaryNumber = createContactRequest.PrimaryNumber,
             CompanyName = createContactRequest.CompanyName,
             Address = createContactRequest.Address,
-            CreatedByUserId = userId.Value,
         };
 
         SaveResult saveResult = _contactBusinessService.CreateNewContact(contactDto, workspaceId.Value, userId.Value);
@@ -82,5 +82,58 @@ public class ContactPageService : IContactPageService
         
         return CreateContactSaveResult.AsCreated(contactDto);
     }
+
+    public ContactVm? GetContactVmByIdAsync(int contactId)
+    {
+        ContactDto? contactDto =  _contactBusinessService.GetContactDtoById(contactId);
+
+        if (contactDto == null)
+        {
+            return null;
+        }
+
+        return new ContactVm
+        {
+            Id = contactId,
+            Name = contactDto.Name,
+            Email = contactDto.Email,
+            PrimaryNumber = contactDto.PrimaryNumber,
+            CompanyName = contactDto.CompanyName,
+            Address = contactDto.Address,
+            CreatedByName = contactDto.CreatedByUser.UserOauthAccount.Username,
+            CreatedOn = contactDto.CreatedOn,
+            LastUpdatedByName = contactDto.LastUpdatedByUser.UserOauthAccount.Username,
+            LastUpdatedOn = contactDto.LastUpdatedOn,
+        };
+    }
+
+    public async Task<LoadResult<ContactVm?>> GetContactForView(int contactId)
+    {
+        ContactVm? contact = GetContactVmByIdAsync(contactId);
+        
+        if (contact == null)
+        {
+            return LoadResult<ContactVm?>.AsFailure("Contact not found");
+        }
+        
+        return LoadResult<ContactVm?>.AsSuccess(contact);
+    }
+
+    public async Task<SaveResult> DeleteContactAsync(int contactId)
+    {
+        int? reloId = await _authExtensions.GetIdentityClaimReloUserIdAsInt();
+        if (reloId == null)
+        {
+            return SaveResult.AsFailure("Unable to determine Relo Id");
+        }
+        
+        SaveResult deleteResult = _contactBusinessService.DeleteContact(contactId);
+        if (!deleteResult.WasDeleted)
+        {
+            return SaveResult.AsFailure("Failed to delete contact");
+        }
+        return SaveResult.AsDeleted();
+    }
+    
 
 }

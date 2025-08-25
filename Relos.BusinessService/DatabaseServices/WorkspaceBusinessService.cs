@@ -53,12 +53,12 @@ public class WorkspaceBusinessService : IWorkspaceBusinessService
     public SaveResult DeleteWorkspace(int workspaceId)
     {
         Workspace? workspace = _workspaceService.GetWorkspaceById(workspaceId);
-        bool deleteSuccess = false;
         if (workspace == null)
         { 
             return SaveResult.AsDeleted();
         }
-        
+
+
         SaveResult deleteResult = _workspaceService.DeleteWorkspace(workspace);
 
         if (!deleteResult.WasDeleted)

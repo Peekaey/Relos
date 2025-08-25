@@ -12,6 +12,11 @@ public static class DateTimeHelpers
         workspaces.ForEach(w => w.CreatedOn = TimeZoneInfo.ConvertTimeFromUtc(w.CreatedOn, AestTimeZone));
         return workspaces;
     }
+
+    public static DateTime ConvertToAest(this DateTime dateTime)
+    {
+        return TimeZoneInfo.ConvertTimeFromUtc(dateTime, AestTimeZone);
+    }
     
     
 }

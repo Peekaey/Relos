@@ -1,8 +1,6 @@
-using Relos.Models.DatabaseModels;
+namespace Relos.Models.ViewModels;
 
-namespace Relos.Models.Dtos;
-
-public class ContactDto
+public class ContactVm
 {
     public int Id { get; set; }
     public string Name { get; set; }
@@ -11,7 +9,8 @@ public class ContactDto
     public string CompanyName { get; set; }
     public string Address { get; set; }
     public DateTime CreatedOn { get; set; }
-    public User CreatedByUser { get; set; }
+    public string CreatedByName { get; set; }
     public DateTime LastUpdatedOn { get; set; }
-    public User LastUpdatedByUser { get; set; }
+    public string LastUpdatedByName { get; set; }
+    
 }

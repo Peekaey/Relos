@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Relos.DataService.Migrations
 {
     /// <inheritdoc />
-    public partial class Add_Initial_Migrations : Migration
+    public partial class Initial_Migration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -97,7 +97,8 @@ namespace Relos.DataService.Migrations
                     CompanyName = table.Column<string>(type: "text", nullable: false),
                     Address = table.Column<string>(type: "text", nullable: false),
                     WorkspaceId = table.Column<int>(type: "integer", nullable: false),
-                    CreatedByUserId = table.Column<int>(type: "integer", nullable: false)
+                    CreatedByUserId = table.Column<int>(type: "integer", nullable: false),
+                    LastUpdatedByUserId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -105,6 +106,12 @@ namespace Relos.DataService.Migrations
                     table.ForeignKey(
                         name: "FK_Contacts_Users_CreatedByUserId",
                         column: x => x.CreatedByUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Contacts_Users_LastUpdatedByUserId",
+                        column: x => x.LastUpdatedByUserId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -120,6 +127,11 @@ namespace Relos.DataService.Migrations
                 name: "IX_Contacts_CreatedByUserId",
                 table: "Contacts",
                 column: "CreatedByUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Contacts_LastUpdatedByUserId",
+                table: "Contacts",
+                column: "LastUpdatedByUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Contacts_WorkspaceId",

@@ -5,6 +5,7 @@
 @using Relos.Models.Dtos
 @using Relos.Models.Pages
 @using Relos.Models.RequestDtos
+@using Relos.Models.Results
 @using Relos.PageService.Interfaces
 @using Relos.Web.Components.Layout
 @inject DialogService DialogService
@@ -14,11 +15,12 @@
 @inject NotificationService NotificationService
 @layout NavOverlay
 @attribute [Authorize]
+@inject NavigationManager NavigationManager
 
 <RadzenStack>
     <RadzenStack>
         <RadzenButton Text="Add new Contact"
-                      ButtonSyle="ButtonStyle.Primary"
+                      ButtonStyle="ButtonStyle.Primary"
                       Icon="add"
                       Click="@OpenCreateContactDialog"
                       Disabled="@isLoading"/>
@@ -31,37 +33,67 @@
         }
         else
         {
-            <RadzenDataGrid @ref="contactsGrid" TItem="ContactDto"
-                            ColumnWidth="300px"
-                             Count="@totalCount" LoadData="@OnLoadContacts" Data="@contacts">
+            <RadzenDataGrid @ref="contactsGrid" TItem="ContactDto" Count="@totalCount" LoadData="@OnLoadContacts" Data="@contacts">
                 <Columns>
-                <RadzenDataGridColumn TItem="ContactDto" Context="data" Property="@nameof(ContactDto.Id)" Title="Id"></RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="ContactDto" Context="data" Property="@nameof(ContactDto.Name)" Title="Name"></RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="ContactDto" Context="data" Property="@nameof(ContactDto.Email)" Title="Email"></RadzenDataGridColumn>
-            </Columns>
+                    <RadzenDataGridColumn TItem="ContactDto" Context="data" Property="@nameof(ContactDto.Id)" Title="ID"></RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="ContactDto" Context="data" Property="@nameof(ContactDto.CompanyName)" Title="Company Name"></RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="ContactDto" Context="data" Property="@nameof(ContactDto.Name)" Title="Name"></RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="ContactDto" Context="data" Property="@nameof(ContactDto.Email)" Title="Email"></RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="ContactDto" Context="data" Property="@nameof(ContactDto.PrimaryNumber)" Title="Primary Number"></RadzenDataGridColumn>
+        
+                    <!-- Actions Column -->
+                    <RadzenDataGridColumn TItem="ContactDto" Context="data" Title="Actions" Sortable="false" Filterable="false">
+                        <Template Context="data">
+                            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem">
+                                @* <RadzenButton Icon="visibility" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.Small"  *@
+                                @*               Click="@(() => ViewContact(data.Id))" /> *@
+                                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Small" 
+                                              Click="@(() => EditContact(data.Id))" />
+                                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" 
+                                              Click="@(() => OpenDeleteContactDialog(data.Id, data.Name, data.CompanyName))" />
+                            </RadzenStack>
+                        </Template>
+                    </RadzenDataGridColumn>
+                </Columns>
             </RadzenDataGrid>
         }
     </RadzenStack>
 </RadzenStack>
 
 @code {
+
     // https://stackoverflow.com/questions/69863695/blazor-radzen-grid-doesnt-show-any-data
     private RadzenDataGrid<ContactDto> contactsGrid;
     private List<ContactDto> contacts = new List<ContactDto>();
     private bool isLoading = false;
     private string? loadError = null;
     private int totalCount = 0;
-    
-    
+
+
     protected override async Task OnInitializedAsync()
     {
         await LoadContacts();
     }
 
+    private async Task EditContact(int id)
+    {
+        NavigationManager.NavigateTo($"/contacts/edit/{id}");
+    }
+
+    private async Task ViewContact(int id)
+    {
+        NavigationManager.NavigateTo($"/contacts/edit/{id}");
+    }
+    
+    private async Task DeleteContact(int id)
+    {
+        
+    }
+
     private async Task OnLoadContacts(LoadDataArgs args)
     {
         Logger.LogInformation("OnLoadContacts called with Skip: {Skip}, Top: {Top}", args.Skip, args.Top);
-        
+
         isLoading = true;
         loadError = null;
 
@@ -72,17 +104,17 @@
             if (loadResult.LoadSuccess && loadResult.Contacts != null)
             {
                 Logger.LogInformation("Successfully loaded {Count} contacts from service", loadResult.Contacts.Count);
-                
+
                 // Set the data for the grid
                 var allContacts = loadResult.Contacts;
                 totalCount = allContacts.Count;
-                
+
                 // Apply paging if needed
                 contacts = allContacts
                     .Skip(args.Skip ?? 0)
                     .Take(args.Top ?? totalCount)
                     .ToList();
-                
+
                 Logger.LogInformation("Showing {Count} contacts on current page", contacts.Count);
             }
             else
@@ -154,7 +186,30 @@
         {
             await HandleCreateContact(request);
         }
+    }
 
+    private async Task OpenDeleteContactDialog(int contactId, string contactName, string contactCompany)
+    {
+        var result = await DialogService.OpenAsync<DeleteContactDialog>("Delete Contact",
+            new Dictionary<string, object>
+            {
+                { "ContactId", contactId },
+                { "ContactName", contactName },
+                { "CompanyName", contactCompany }
+            },
+            options: new DialogOptions()
+            {
+                CloseDialogOnEsc = true,
+                Width = "400px",
+                Resizable = false,
+                Draggable = false,
+                CloseDialogOnOverlayClick = false
+            });
+
+        if (result is DeleteContactRequest)
+        {
+            await HandleDeleteContact(result);
+        }
     }
 
     private async Task HandleCreateContact(CreateContactRequest request)
@@ -162,7 +217,7 @@
         try
         {
             Logger.LogInformation("Creating contact with name: {ContactName}", request.Name);
-            var createResult = await ContactPageService.CrateNewContactAsync(request);
+            var createResult = await ContactPageService.CreateNewContactAsync(request);
 
             if (createResult.IsSuccess)
             {
@@ -170,6 +225,7 @@
                 {
                     contacts.Add(createResult.ContactDto);
                     StateHasChanged();
+                    await contactsGrid.Reload();
                     NotificationService.Notify(new NotificationMessage
                     {
                         Severity = NotificationSeverity.Success,
@@ -195,6 +251,43 @@
                 Severity = NotificationSeverity.Error,
                 Summary = "Error",
                 Detail = "An unexpected error occured while creating the workspace"
+            });
+        }
+    }
+
+    private async Task HandleDeleteContact(DeleteContactRequest contact)
+    {
+        try
+        {
+            SaveResult deleteResult = await ContactPageService.DeleteContactAsync(contact.ContactId);
+            if (deleteResult.WasDeleted)
+            {
+                StateHasChanged();
+                await contactsGrid.Reload();
+                NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Success",
+                    Detail = $"Contact '{contact.ContactName}' was deleted successfully"
+                });
+            }
+            else
+            {
+                NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Error",
+                    Detail = "Unexpected error occured when attempting to delete contact"
+                });
+            }
+        }
+        catch (Exception e)
+        {
+            NotificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "Error",
+                Detail = "An unexpected error occured while deleting the contact"
             });
         }
     }

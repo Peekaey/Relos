@@ -4,10 +4,14 @@ namespace Relos.Models.DatabaseModels;
 
 public class Contact : ISystemArchivableAuditable
 {
-    public Contact()
+    public Contact() {}
+
+    public Contact(int userId)
     {
         CreatedDateTimeUtc = DateTime.UtcNow;
         LastUpdatedDateTimeUtc = DateTime.UtcNow;
+        CreatedByUserId = userId;
+        LastUpdatedByUserId = userId;
     }
     
     public int Id { get; set; }
@@ -27,4 +31,6 @@ public class Contact : ISystemArchivableAuditable
     public Workspace Workspace { get; set; }
     public int CreatedByUserId { get; set; }
     public User CreatedByUser { get; set; }
+    public int LastUpdatedByUserId { get; set; }
+    public User LastUpdatedByUser { get; set; }
 }

@@ -1,0 +1,105 @@
+@page "/contacts/edit/{Id:int}"
+@using Microsoft.AspNetCore.Authorization
+@using Relos.Models.Results
+@using Relos.Models.ViewModels
+@using Relos.PageService.Interfaces
+@using Relos.Web.Components.Layout
+@layout NavOverlay
+@inject IContactPageService ContactPageService
+@inject ILogger<EditContact> Logger
+@rendermode InteractiveServer
+@attribute [Authorize]
+
+@if (isLoading == true)
+{
+    <RadzenCard Class="rz-text-align-center rz-p-8">
+        <RadzenProgressBarCircular ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
+        <RadzenText Class="rz-mt-2">Loading contact...</RadzenText>
+    </RadzenCard>
+}
+else
+{
+    <RadzenTemplateForm TItem="ContactVm" Data="@contactVm" Submit="OnValidSubmit">
+    <DataAnnotationsValidator></DataAnnotationsValidator>
+        <RadzenStack Gap="1rem" AlignItems="AlignItems.Center">
+            <RadzenText  TextStyle="TextStyle.H4"> Contact: @contactVm.Name </RadzenText>
+            <RadzenText TextStyle="TextStyle.Caption">
+                <b>Created on:</b> @contactVm.CreatedOn by @contactVm.CreatedByName. 
+                <b>Last Updated on:</b> @contactVm.LastUpdatedOn by @contactVm.LastUpdatedByName
+            </RadzenText>
+            <RadzenStack Orientation="Orientation.Horizontal">
+                <RadzenFormField Text="Contact Name">
+                    <RadzenTextBox @bind-Value="contactVm.Name" ReadOnly="@readOnly"/>
+                </RadzenFormField>
+                <RadzenFormField Text="Company Name">
+                    <RadzenTextBox @bind-Value="contactVm.CompanyName" ReadOnly="@readOnly"/>
+                </RadzenFormField>
+            </RadzenStack>
+            <RadzenStack Orientation="Orientation.Horizontal">
+                <RadzenFormField Text="Primary Number">
+                    <RadzenTextBox @bind-Value="contactVm.PrimaryNumber" ReadOnly="@readOnly"/>
+                </RadzenFormField>
+                <RadzenFormField Text="Email">
+                    <RadzenTextBox @bind-Value="contactVm.Email" ReadOnly="@readOnly"/>
+                </RadzenFormField>
+            </RadzenStack>
+            <RadzenStack Orientation="Orientation.Horizontal">
+                <RadzenFormField Text="Address">
+                    <RadzenTextArea @bind-Value="contactVm.Address" Rows="3" ReadOnly="@readOnly"/>
+                </RadzenFormField>
+            </RadzenStack>
+        </RadzenStack>
+    </RadzenTemplateForm>
+
+}
+
+@code {
+    private ContactVm contactVm { get; set; }
+    private bool isLoading = true;
+    private string? loadError = null;
+    private bool readOnly = true;
+    [Parameter]
+    public int Id { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadContact();
+    }
+
+    private async Task LoadContact()
+    {
+        isLoading = true;
+        loadError = null;
+        StateHasChanged();
+        try
+        {
+            LoadResult<ContactVm?> loadResult = await ContactPageService.GetContactForView(Id);
+            if (loadResult.IsSuccess == true)
+            {
+                contactVm = loadResult.Data as ContactVm;
+            }
+            else
+            {
+                loadError = loadResult.GetErrorMessage();
+                Logger.LogError("Failed to load contact with ID {ContactId}: {ErrorMessage}");
+            }
+        }
+        catch (Exception e)
+        {
+            loadError = "An error occurred while loading the contact.";
+            Logger.LogError(e, "Error loading contact with ID {ContactId}", Id);
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnValidSubmit()
+    {
+        
+    }
+
+
+}

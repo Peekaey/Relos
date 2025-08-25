@@ -12,8 +12,8 @@ using Relos.DataService;
 namespace Relos.DataService.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250818102655_Add_Initial_Migrations")]
-    partial class Add_Initial_Migrations
+    [Migration("20250825125726_Initial_Migration")]
+    partial class Initial_Migration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -57,6 +57,9 @@ namespace Relos.DataService.Migrations
                     b.Property<bool>("IsArchived")
                         .HasColumnType("boolean");
 
+                    b.Property<int>("LastUpdatedByUserId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("LastUpdatedDateTimeUtc")
                         .HasColumnType("timestamp with time zone");
 
@@ -74,6 +77,8 @@ namespace Relos.DataService.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedByUserId");
+
+                    b.HasIndex("LastUpdatedByUserId");
 
                     b.HasIndex("WorkspaceId");
 
@@ -200,6 +205,12 @@ namespace Relos.DataService.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Relos.Models.DatabaseModels.User", "LastUpdatedByUser")
+                        .WithMany()
+                        .HasForeignKey("LastUpdatedByUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Relos.Models.DatabaseModels.Workspace", "Workspace")
                         .WithMany()
                         .HasForeignKey("WorkspaceId")
@@ -207,6 +218,8 @@ namespace Relos.DataService.Migrations
                         .IsRequired();
 
                     b.Navigation("CreatedByUser");
+
+                    b.Navigation("LastUpdatedByUser");
 
                     b.Navigation("Workspace");
                 });

@@ -49,7 +49,7 @@ public class AuthController : ControllerBase
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         _logger.LogInformation("User {Username} logged out", User.Identity?.Name);
-        return Redirect("/");
+        return Redirect("/login");
     }
 
     [HttpGet("status")]
@@ -72,12 +72,13 @@ public class AuthController : ControllerBase
     }
     
     [HttpGet("set-workspace/{workspaceId}")]
+    [Authorize]
     public async Task<IActionResult> SelectWorkspace(int workspaceId)
     {
         try
         {
             await _authExtensions.AddWorkSpaceIdToClaims(workspaceId);
-            return Redirect("/home");
+            return Redirect("/inbox");
         }
         catch (Exception ex)
         {

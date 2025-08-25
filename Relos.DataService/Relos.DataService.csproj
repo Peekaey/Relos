@@ -19,8 +19,4 @@
       <ProjectReference Include="..\Relos.Models\Relos.Models.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Migrations\" />
-    </ItemGroup>
-
 </Project>

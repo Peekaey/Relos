@@ -8,11 +8,20 @@
 <RadzenStack Gap="1.5rem">
     <RadzenAlert AlertStyle="AlertStyle.Warning" Variant="Variant.Flat" Shade="Shade.Lighter">
         <RadzenStack Gap="0.5rem">
-            <RadzenText TextStyle="TextStyle.Body1">
-                Are you sure you want to delete the workspace <strong>"@WorkspaceName"</strong>?
-            </RadzenText>
+            @if (CompanyName != null)
+            {
+                <RadzenText TextStyle="TextStyle.Body1">
+                    Are you sure you want to delete the contact <strong>"@ContactName"</strong> from <strong>"@CompanyName"</strong>?
+                </RadzenText>
+            }
+            else
+            {
+                <RadzenText TextStyle="TextStyle.Body1">
+                    Are you sure you want to delete the contact <strong>"@ContactName"</strong>?
+                </RadzenText>
+            }
             <RadzenText TextStyle="TextStyle.Body2" Class="rz-color-danger-darker">
-                This action cannot be undone. All data associated with this workspace will be permanently removed.
+                This action cannot be undone. All data associated with this client will be permanently removed.
             </RadzenText>
         </RadzenStack>
     </RadzenAlert>
@@ -23,31 +32,38 @@
         <RadzenButton Text="Cancel"
                       ButtonStyle="ButtonStyle.Light"
                       Click="@Cancel" />
-        <RadzenButton Text="Delete Workspace"
+        <RadzenButton Text="Delete Contact"
                       ButtonStyle="ButtonStyle.Danger"
                       Icon="delete"
                       Click="@Submit" />
     </RadzenStack>
 </RadzenStack>
 
+
 @code {
-    [Parameter] public string WorkspaceName { get; set; } = string.Empty;
-    [Parameter] public int WorkspaceId { get; set; }
+    [Parameter] 
+    public string ContactName { get; set; }
+    [Parameter]
+    public string? CompanyName { get; set; }
+    [Parameter]
+    public int ContactId { get; set; }
 
     private void Cancel()
     {
         DialogService.Close(false);
     }
-
+    
     private void Submit()
     {
-        var request = new DeleteWorkspaceRequest
+        var result = new DeleteContactRequest
         {
-            WorkspaceId = WorkspaceId,
-            WorkspaceName = WorkspaceName.Trim()
+            ContactId = ContactId,
+            ContactName = ContactName
         };
-
-        DialogService.Close(request);
+        DialogService.Close(result);
     }
+    
+    
+    
     
 }
