@@ -2,6 +2,9 @@
 @inject NavigationManager NavigationManager
 @code {
     
+    // We implement a Logout page instead of directly calling the auth/logout endpoint as RadzenProfileMenuItems 
+    // within the navigation bar (NavOverlay) do not directly support calling Api endpoints directly
+    // and only page navigation
     protected override async Task OnInitializedAsync()
     {
         NavigationManager.NavigateTo($"api/v1/auth/logout", forceLoad: true);
