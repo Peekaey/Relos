@@ -3,6 +3,24 @@
 @layout NavOverlay
 <h3>WorkspaceSettings</h3>
 
+@if (isLoading == true)
+{
+    <RadzenCard Class="rz-text-align-center rz-p-8">
+        <RadzenProgressBarCircular ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
+        <RadzenText Class="rz-mt-2">Loading contact...</RadzenText>
+    </RadzenCard>
+}
+else
+{
+    <RadzenStack Gap="1rem" AlignItems="AlignItems.Center">
+        <RadzenStack>
+            <RadzenText TextStyle="TextStyle.H6"> Custom Contact Fields  </RadzenText>
+
+        </RadzenStack>
+    </RadzenStack>
+}
+
+
 @code {
-    
+    private bool isLoading = false;
 }
