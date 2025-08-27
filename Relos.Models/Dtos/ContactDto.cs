@@ -8,8 +8,10 @@ public class ContactDto
     public string Name { get; set; }
     public string Email { get; set; }
     public string PrimaryNumber { get; set; }
+    public string SecondaryNumber { get; set; }
+    public string Position { get; set; }
     public string CompanyName { get; set; }
-    public string Address { get; set; }
+    public string Location { get; set; }
     public DateTime CreatedOn { get; set; }
     public User CreatedByUser { get; set; }
     public DateTime LastUpdatedOn { get; set; }

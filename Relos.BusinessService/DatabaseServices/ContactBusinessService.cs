@@ -29,8 +29,10 @@ public class ContactBusinessService : IContactBusinessService
             Name = c.Name,
             Email = c.Email,
             PrimaryNumber = c.PrimaryNumber,
+            SecondaryNumber = c.SecondaryNumber,
             CompanyName = c.CompanyName,
-            Address = c.Address,
+            Position = c.Position,
+            Location = c.Location,
         }).ToList();
         
         return contactDtos;
@@ -38,15 +40,18 @@ public class ContactBusinessService : IContactBusinessService
 
     public SaveResult CreateNewContact(ContactDto contactDto, int workspaceId, int userId)
     {
-        Contact contact = new Contact(userId)
+        Contact contact = new Contact
         {
             Name = contactDto.Name,
             Email = contactDto.Email,
             PrimaryNumber = contactDto.PrimaryNumber,
+            SecondaryNumber = contactDto.SecondaryNumber,
             CompanyName = contactDto.CompanyName,
-            Address = contactDto.Address,
+            Position = contactDto.Position,
+            Location = contactDto.Location,
             CreatedByUserId = userId,
-            WorkspaceId = workspaceId
+            WorkspaceId = workspaceId,
+            LastUpdatedByUserId = userId,
         };
 
         return _contactService.SaveNewContact(contact);
@@ -67,12 +72,14 @@ public class ContactBusinessService : IContactBusinessService
             Name = contact.Name,
             Email = contact.Email,
             PrimaryNumber = contact.PrimaryNumber,
+            SecondaryNumber = contact.SecondaryNumber,
             CompanyName = contact.CompanyName,
-            Address = contact.Address,
+            Position = contact.Position,
+            Location = contact.Location,
             CreatedByUser = contact.CreatedByUser,
-            CreatedOn = contact.CreatedDateTimeUtc,
+            CreatedOn = contact.CreatedOnUtc,
             LastUpdatedByUser = contact.LastUpdatedByUser,
-            LastUpdatedOn = contact.LastUpdatedDateTimeUtc,
+            LastUpdatedOn = contact.LastUpdatedOnUtc,
         };
     }
 

@@ -7,5 +7,6 @@ public interface IUserOauthAccountService
 {
     UserOauthAccount? GetUserOauthAccountByUuid(string uuid);
     SaveResult UpdateLastLoginDate(int userOauthAccountId);
+    int? GetUserIdByUuid(string uuid);
 
 }

@@ -37,5 +37,31 @@ public class UserService : IUserService
             }
         }
     }
+
+    public SaveResult UpdateLastLoginDate(int userId, DateTime lastLoginDate)
+    {
+        User? user = _dataContext.Users.FirstOrDefault(u => u.Id == userId);
+        if (user == null)
+        {
+            return SaveResult.AsUpdated();
+        }
+        
+        using (var transaction = _dataContext.Database.BeginTransaction())
+        {
+            try
+            {
+                user.LastUpdatedBySystemUtc = DateTime.UtcNow;
+                _dataContext.Users.Update(user);
+                _dataContext.SaveChanges();
+                transaction.Commit();
+                return SaveResult.AsUpdated();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return SaveResult.AsFailure("Failed to update last login date");
+            }
+        }
+    }
     
 }

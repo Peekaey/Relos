@@ -38,6 +38,12 @@ public class UserOauthAccountBusinessService : IUserOauthAccountBusinessService
         };
     }
 
+    public int? GetUserIdByUuid(string uuid)
+    {
+        return _userOauthAccountService.GetUserIdByUuid(uuid);
+    }
+    
+
     public SaveResult UpdateLastLoginDate(int userOauthAccountId)
     {
         return _userOauthAccountService.UpdateLastLoginDate(userOauthAccountId);

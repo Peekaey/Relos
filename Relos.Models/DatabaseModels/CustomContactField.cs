@@ -1,46 +1,40 @@
 using System.ComponentModel.DataAnnotations;
-using Microsoft.EntityFrameworkCore;
 using Relos.Models.Interfaces;
 
 namespace Relos.Models.DatabaseModels;
 
-public class Workspace : IUserCreateAuditable, IUserLastUpdateAuditable, IUserArchiveAuditable
+public class CustomContactField : IUserCreateAuditable, IUserLastUpdateAuditable, IUserArchiveAuditable
 {
-
-    public Workspace()
+    public CustomContactField()
     {
         CreatedOnUtc = DateTime.UtcNow;
         LastUpdatedOnUtc = DateTime.UtcNow;
         IsArchived = false;
     }
     
-    [Required]
-    public int Id { get; set; }
-    [Required]
-    public string WorkspaceName { get; set; }
-    public string WorkspaceDescription { get; set; }
-    [Required]
-    public int WorkspaceOwnerId { get; set; }
-    public User WorkspaceOwner { get; set; }
-    // IUserCreateAuditable
+    //IUserCreateAuditable
     [Required]
     public DateTime CreatedOnUtc { get; set; }
     public User CreatedByUser { get; set; }
     [Required]
     public int CreatedByUserId { get; set; }
-    // IUserLastUpdateAuditable
+    //IUserLastUpdateAuditable
     [Required]
     public DateTime LastUpdatedOnUtc { get; set; }
     public User LastUpdatedByUser { get; set; }
     [Required]
     public int LastUpdatedByUserId { get; set; }
-    // IUserArchiveAuditable
+    //IUserArchiveAuditable
     public bool? IsArchived { get; set; }
     public DateTime? ArchivedOnUtc { get; set; }
     public User? ArchivedByUser { get; set; }
     public int? ArchivedByUserId { get; set; }
     
-    public ICollection<Contact> Contacts { get; set; } = new List<Contact>();
-    public ICollection<CustomContactFieldTemplate> CustomContactFieldTemplates { get; set; } = new List<CustomContactFieldTemplate>();
+    public int Id { get; set; }
+    [Required]
+    public int ContactId { get; set; }
+    public Contact Contact { get; set; }
+    [Required]
+    public string FieldValue { get; set; }
     
 }

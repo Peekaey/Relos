@@ -23,6 +23,20 @@
                            Name="Email" />
             <RadzenEmailValidator Component="Email" Text="Invalid email format." />
         </RadzenFormField>
+        
+        <RadzenFormField Text="Company Name" Variant="Variant.Outlined">
+            <RadzenTextBox @bind-Value="@model.CompanyName"
+                           Class="w-100"
+                           Placeholder="Enter company name (optional)"
+                           Name="CompanyName" />
+        </RadzenFormField>
+        
+        <RadzenFormField Text="Position" Variant="Variant.Outlined">
+            <RadzenTextBox @bind-Value="@model.Position"
+                           Class="w-100"
+                           Placeholder="Enter position (optional)"
+                           Name="Position" />
+        </RadzenFormField>
 
         <RadzenFormField Text="Primary Number" Variant="Variant.Outlined">
             <RadzenTextBox @bind-Value="@model.PrimaryNumber"
@@ -31,19 +45,19 @@
                            Name="PrimaryNumber" />
         </RadzenFormField>
 
-        <RadzenFormField Text="Company Name" Variant="Variant.Outlined">
-            <RadzenTextBox @bind-Value="@model.CompanyName"
+        <RadzenFormField Text="Secondary Number" Variant="Variant.Outlined">
+            <RadzenTextBox @bind-Value="@model.SecondaryNumber"
                            Class="w-100"
-                           Placeholder="Enter company name (optional)"
-                           Name="CompanyName" />
+                           Placeholder="Enter secondary number (optional)"
+                           Name="SecondaryNumber" />
         </RadzenFormField>
-
-        <RadzenFormField Text="Address" Variant="Variant.Outlined">
-            <RadzenTextArea @bind-Value="@model.Address"
+        
+        <RadzenFormField Text="Location" Variant="Variant.Outlined">
+            <RadzenTextArea @bind-Value="@model.Location"
                             Rows="3"
                             Class="w-100"
-                            Placeholder="Enter address (optional)"
-                            Name="Address" />
+                            Placeholder="Enter location (optional)"
+                            Name="Location" />
         </RadzenFormField>
 
     <RadzenStack Orientation="Orientation.Horizontal"
@@ -80,8 +94,10 @@
             Name = model.Name?.Trim() ?? string.Empty,
             Email = model.Email?.Trim() ?? string.Empty,
             PrimaryNumber = model.PrimaryNumber?.Trim() ?? string.Empty,
+            SecondaryNumber = model.SecondaryNumber.Trim() ?? string.Empty,
+            Position = model.Position?.Trim() ?? string.Empty,
             CompanyName = model.CompanyName?.Trim() ?? string.Empty,
-            Address = model.Address?.Trim() ?? string.Empty
+            Location = model.Location?.Trim() ?? string.Empty
         };
 
         DialogService.Close(request);

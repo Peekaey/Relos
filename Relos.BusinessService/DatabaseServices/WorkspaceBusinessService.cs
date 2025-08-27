@@ -27,7 +27,9 @@ public class WorkspaceBusinessService : IWorkspaceBusinessService
             WorkspaceName = workspaceDto.Name,
             WorkspaceDescription = workspaceDto.Description,
             WorkspaceOwnerId = workspaceDto.OwnerId,
-            CreatedDateTimeUtc = workspaceDto.CreatedOn
+            CreatedOnUtc = workspaceDto.CreatedOn,
+            CreatedByUserId = workspaceDto.OwnerId,
+            LastUpdatedByUserId = workspaceDto.OwnerId
         };
         
         return _workspaceService.SaveNewWorkspace(workspace);
@@ -43,7 +45,7 @@ public class WorkspaceBusinessService : IWorkspaceBusinessService
             Name = w.WorkspaceName,
             Description = w.WorkspaceDescription,
             OwnerId = w.WorkspaceOwnerId,
-            CreatedOn = w.CreatedDateTimeUtc,
+            CreatedOn = w.CreatedOnUtc,
             Id = w.Id
         }).ToList().ConvertToAest();
 

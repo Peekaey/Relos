@@ -1,27 +1,19 @@
 using System.ComponentModel.DataAnnotations;
-using Microsoft.EntityFrameworkCore;
+using Relos.Models.Enums;
 using Relos.Models.Interfaces;
 
 namespace Relos.Models.DatabaseModels;
 
-public class Workspace : IUserCreateAuditable, IUserLastUpdateAuditable, IUserArchiveAuditable
+public class CustomContactFieldTemplate : IUserCreateAuditable, IUserArchiveAuditable, IUserLastUpdateAuditable
 {
 
-    public Workspace()
+
+    public CustomContactFieldTemplate()
     {
         CreatedOnUtc = DateTime.UtcNow;
         LastUpdatedOnUtc = DateTime.UtcNow;
         IsArchived = false;
     }
-    
-    [Required]
-    public int Id { get; set; }
-    [Required]
-    public string WorkspaceName { get; set; }
-    public string WorkspaceDescription { get; set; }
-    [Required]
-    public int WorkspaceOwnerId { get; set; }
-    public User WorkspaceOwner { get; set; }
     // IUserCreateAuditable
     [Required]
     public DateTime CreatedOnUtc { get; set; }
@@ -40,7 +32,13 @@ public class Workspace : IUserCreateAuditable, IUserLastUpdateAuditable, IUserAr
     public User? ArchivedByUser { get; set; }
     public int? ArchivedByUserId { get; set; }
     
-    public ICollection<Contact> Contacts { get; set; } = new List<Contact>();
-    public ICollection<CustomContactFieldTemplate> CustomContactFieldTemplates { get; set; } = new List<CustomContactFieldTemplate>();
+    public int Id {get; set;}
+    [Required]
+    public CustomContactFieldType ContactFieldType {get; set;}
+    [Required]
+    public string FieldName { get; set; }
+    [Required]
+    public int WorkspaceId { get; set; }
+    public Workspace Workspace { get; set; }
     
 }

@@ -9,4 +9,5 @@ namespace Relos.BusinessService.Interfaces;
 public interface IUserBusinessService
 {
     SaveResult CreateAndSaveNewUser(AuthProvider provider, string uuid, string userName, string avatar);
+    SaveResult UpdateLastLoginDate(int userId, DateTime lastLoginDate);
 }

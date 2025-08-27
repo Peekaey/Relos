@@ -33,5 +33,10 @@ public class UserBusinessService : IUserBusinessService
         };
         return _userService.SaveNewUser(newUser);
     }
+
+    public SaveResult UpdateLastLoginDate(int userId, DateTime lastLoginDate)
+    {
+        return _userService.UpdateLastLoginDate(userId,lastLoginDate);
+    }
     
 }

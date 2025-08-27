@@ -30,48 +30,61 @@ namespace Relos.DataService.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int?>("ArchivedByUserId")
+                        .HasColumnType("integer");
 
-                    b.Property<DateTime?>("ArchivedDateTimeUtc")
+                    b.Property<DateTime?>("ArchivedOnUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CompanyName")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int?>("ContactId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("CreatedByUserId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("CreatedDateTimeUtc")
+                    b.Property<DateTime>("CreatedOnUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool>("IsArchived")
+                    b.Property<bool?>("IsArchived")
                         .HasColumnType("boolean");
 
                     b.Property<int>("LastUpdatedByUserId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("LastUpdatedDateTimeUtc")
+                    b.Property<DateTime>("LastUpdatedOnUtc")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Position")
+                        .HasColumnType("text");
+
                     b.Property<string>("PrimaryNumber")
-                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SecondaryNumber")
                         .HasColumnType("text");
 
                     b.Property<int>("WorkspaceId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ArchivedByUserId");
+
+                    b.HasIndex("ContactId");
 
                     b.HasIndex("CreatedByUserId");
 
@@ -82,6 +95,58 @@ namespace Relos.DataService.Migrations
                     b.ToTable("Contacts");
                 });
 
+            modelBuilder.Entity("Relos.Models.DatabaseModels.CustomContactFieldTemplate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("ArchivedByUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("ArchivedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("ContactFieldType")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CreatedByUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("FieldName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool?>("IsArchived")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("LastUpdatedByUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("LastUpdatedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("WorkspaceId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ArchivedByUserId");
+
+                    b.HasIndex("CreatedByUserId");
+
+                    b.HasIndex("LastUpdatedByUserId");
+
+                    b.HasIndex("WorkspaceId");
+
+                    b.ToTable("CustomContactFieldTemplate");
+                });
+
             modelBuilder.Entity("Relos.Models.DatabaseModels.User", b =>
                 {
                     b.Property<int>("Id")
@@ -90,16 +155,19 @@ namespace Relos.DataService.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("ArchivedDateTimeUtc")
+                    b.Property<DateTime?>("ArchivedBySystemUtc")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("CreatedDateTimeUtc")
+                    b.Property<DateTime>("CreatedBySystemUtc")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<bool>("IsArchived")
+                    b.Property<bool?>("IsArchived")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTime>("LastUpdatedDateTimeUtc")
+                    b.Property<DateTime>("LastLoginUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("LastUpdatedBySystemUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
@@ -115,20 +183,22 @@ namespace Relos.DataService.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("ArchivedBySystemUtc")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("AuthProvider")
                         .HasColumnType("integer");
 
                     b.Property<string>("Avatar")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("CreatedDateTimeUtc")
+                    b.Property<DateTime>("CreatedBySystemUtc")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("LastLoginDateUtc")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<bool?>("IsArchived")
+                        .HasColumnType("boolean");
 
-                    b.Property<DateTime>("LastUpdatedDateTimeUtc")
+                    b.Property<DateTime>("LastUpdatedBySystemUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("UserId")
@@ -158,22 +228,25 @@ namespace Relos.DataService.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("ArchivedDateTimeUtc")
+                    b.Property<int?>("ArchivedByUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("ArchivedOnUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("CreatedByUserId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("CreatedDateTimeUtc")
+                    b.Property<DateTime>("CreatedOnUtc")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<bool>("IsArchived")
+                    b.Property<bool?>("IsArchived")
                         .HasColumnType("boolean");
 
                     b.Property<int>("LastUpdatedByUserId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("LastUpdatedDateTimeUtc")
+                    b.Property<DateTime>("LastUpdatedOnUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("WorkspaceDescription")
@@ -189,6 +262,12 @@ namespace Relos.DataService.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ArchivedByUserId");
+
+                    b.HasIndex("CreatedByUserId");
+
+                    b.HasIndex("LastUpdatedByUserId");
+
                     b.HasIndex("WorkspaceOwnerId");
 
                     b.ToTable("Workspaces");
@@ -196,6 +275,14 @@ namespace Relos.DataService.Migrations
 
             modelBuilder.Entity("Relos.Models.DatabaseModels.Contact", b =>
                 {
+                    b.HasOne("Relos.Models.DatabaseModels.User", "ArchivedByUser")
+                        .WithMany()
+                        .HasForeignKey("ArchivedByUserId");
+
+                    b.HasOne("Relos.Models.DatabaseModels.Contact", null)
+                        .WithMany("Contacts")
+                        .HasForeignKey("ContactId");
+
                     b.HasOne("Relos.Models.DatabaseModels.User", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
@@ -209,10 +296,45 @@ namespace Relos.DataService.Migrations
                         .IsRequired();
 
                     b.HasOne("Relos.Models.DatabaseModels.Workspace", "Workspace")
-                        .WithMany()
+                        .WithMany("Contacts")
                         .HasForeignKey("WorkspaceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("ArchivedByUser");
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("LastUpdatedByUser");
+
+                    b.Navigation("Workspace");
+                });
+
+            modelBuilder.Entity("Relos.Models.DatabaseModels.CustomContactFieldTemplate", b =>
+                {
+                    b.HasOne("Relos.Models.DatabaseModels.User", "ArchivedByUser")
+                        .WithMany()
+                        .HasForeignKey("ArchivedByUserId");
+
+                    b.HasOne("Relos.Models.DatabaseModels.User", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Relos.Models.DatabaseModels.User", "LastUpdatedByUser")
+                        .WithMany()
+                        .HasForeignKey("LastUpdatedByUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Relos.Models.DatabaseModels.Workspace", "Workspace")
+                        .WithMany("CustomContactFieldTemplates")
+                        .HasForeignKey("WorkspaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ArchivedByUser");
 
                     b.Navigation("CreatedByUser");
 
@@ -234,19 +356,53 @@ namespace Relos.DataService.Migrations
 
             modelBuilder.Entity("Relos.Models.DatabaseModels.Workspace", b =>
                 {
+                    b.HasOne("Relos.Models.DatabaseModels.User", "ArchivedByUser")
+                        .WithMany()
+                        .HasForeignKey("ArchivedByUserId");
+
+                    b.HasOne("Relos.Models.DatabaseModels.User", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Relos.Models.DatabaseModels.User", "LastUpdatedByUser")
+                        .WithMany()
+                        .HasForeignKey("LastUpdatedByUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Relos.Models.DatabaseModels.User", "WorkspaceOwner")
                         .WithMany()
                         .HasForeignKey("WorkspaceOwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("ArchivedByUser");
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("LastUpdatedByUser");
+
                     b.Navigation("WorkspaceOwner");
+                });
+
+            modelBuilder.Entity("Relos.Models.DatabaseModels.Contact", b =>
+                {
+                    b.Navigation("Contacts");
                 });
 
             modelBuilder.Entity("Relos.Models.DatabaseModels.User", b =>
                 {
                     b.Navigation("UserOauthAccount")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Relos.Models.DatabaseModels.Workspace", b =>
+                {
+                    b.Navigation("Contacts");
+
+                    b.Navigation("CustomContactFieldTemplates");
                 });
 #pragma warning restore 612, 618
         }

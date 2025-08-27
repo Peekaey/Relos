@@ -1,4 +1,5 @@
 using System.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Relos.DataService.Interfaces;
 using Relos.Models.DatabaseModels;
@@ -22,7 +23,14 @@ public class UserOauthAccountService : IUserOauthAccountService
 
     public UserOauthAccount? GetUserOauthAccountByUuid(string uuid)
     {
-        return _dataContext.UserOauthAccounts.FirstOrDefault(x => x.Uuid == uuid);
+        return _dataContext.UserOauthAccounts
+            .FirstOrDefault(x => x.Uuid == uuid);
+    }
+
+    public int? GetUserIdByUuid(string uuid)
+    {
+        var userOauthAccount = _dataContext.UserOauthAccounts.FirstOrDefault(uoa => uoa.Uuid == uuid);
+        return userOauthAccount?.UserId;
     }
 
     public SaveResult UpdateLastLoginDate(int userOauthAccountId)
@@ -37,7 +45,7 @@ public class UserOauthAccountService : IUserOauthAccountService
         {
             try
             {
-                existingUserOauthAccount.LastLoginDateUtc = DateTime.UtcNow;
+                existingUserOauthAccount.LastUpdatedBySystemUtc = DateTime.UtcNow;
                 _dataContext.UserOauthAccounts.Update(existingUserOauthAccount);
                 _dataContext.SaveChanges();
                 transaction.Commit();

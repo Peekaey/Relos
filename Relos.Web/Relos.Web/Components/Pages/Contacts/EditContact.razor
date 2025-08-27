@@ -9,6 +9,7 @@
 @inject ILogger<EditContact> Logger
 @rendermode InteractiveServer
 @attribute [Authorize]
+@inject NavigationManager NavigationManager
 
 @if (isLoading == true)
 {
@@ -21,34 +22,51 @@ else
 {
     <RadzenTemplateForm TItem="ContactVm" Data="@contactVm" Submit="OnValidSubmit">
     <DataAnnotationsValidator></DataAnnotationsValidator>
-        <RadzenStack Gap="1rem" AlignItems="AlignItems.Center">
-            <RadzenText  TextStyle="TextStyle.H4"> Contact: @contactVm.Name </RadzenText>
+    <RadzenStack Gap="1rem" AlignItems="AlignItems.Center">
+        <RadzenStack AlignItems="AlignItems.Start"> 
+            <RadzenText TextStyle="TextStyle.H4"> Contact: @contactVm.Name </RadzenText>
             <RadzenText TextStyle="TextStyle.Caption">
-                <b>Created on:</b> @contactVm.CreatedOn by @contactVm.CreatedByName. 
+                <b>Created on:</b> @contactVm.CreatedOn by @contactVm.CreatedByName.
                 <b>Last Updated on:</b> @contactVm.LastUpdatedOn by @contactVm.LastUpdatedByName
             </RadzenText>
             <RadzenStack Orientation="Orientation.Horizontal">
                 <RadzenFormField Text="Contact Name">
                     <RadzenTextBox @bind-Value="contactVm.Name" ReadOnly="@readOnly"/>
                 </RadzenFormField>
+                <RadzenFormField Text="Email">
+                    <RadzenTextBox @bind-Value="contactVm.Email" ReadOnly="@readOnly"/>
+                </RadzenFormField>
+            </RadzenStack>
+            <RadzenStack Orientation="Orientation.Horizontal">
                 <RadzenFormField Text="Company Name">
                     <RadzenTextBox @bind-Value="contactVm.CompanyName" ReadOnly="@readOnly"/>
+                </RadzenFormField>
+                <RadzenFormField Text="Position">
+                    <RadzenTextBox @bind-Value="contactVm.Position" ReadOnly="@readOnly"/>
                 </RadzenFormField>
             </RadzenStack>
             <RadzenStack Orientation="Orientation.Horizontal">
                 <RadzenFormField Text="Primary Number">
                     <RadzenTextBox @bind-Value="contactVm.PrimaryNumber" ReadOnly="@readOnly"/>
                 </RadzenFormField>
-                <RadzenFormField Text="Email">
-                    <RadzenTextBox @bind-Value="contactVm.Email" ReadOnly="@readOnly"/>
+                <RadzenFormField Text="Secondary Number">
+                    <RadzenTextBox @bind-Value="contactVm.SecondaryNumber" ReadOnly="@readOnly"/>
                 </RadzenFormField>
             </RadzenStack>
             <RadzenStack Orientation="Orientation.Horizontal">
-                <RadzenFormField Text="Address">
-                    <RadzenTextArea @bind-Value="contactVm.Address" Rows="3" ReadOnly="@readOnly"/>
+                <RadzenFormField Text="Location">
+                    <RadzenTextArea @bind-Value="contactVm.Location" Rows="3" ReadOnly="@readOnly"/>
                 </RadzenFormField>
             </RadzenStack>
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.End">
+                <RadzenButton ButtonStyle="ButtonStyle.Secondary" Click="@OnCancel">Cancel</RadzenButton>
+                <RadzenButton ButtonStyle="ButtonStyle.Primary">Save</RadzenButton>
+            </RadzenStack>
         </RadzenStack>
+        <RadzenStack AlignItems="AlignItems.End">
+        
+        </RadzenStack>
+    </RadzenStack>
     </RadzenTemplateForm>
 
 }
@@ -58,12 +76,21 @@ else
     private bool isLoading = true;
     private string? loadError = null;
     private bool readOnly = true;
-    [Parameter]
-    public int Id { get; set; }
-    
+    [Parameter] public int Id { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         await LoadContact();
+    }
+
+    private async Task OnSave()
+    {
+
+    }
+
+    private async Task OnCancel()
+    {
+        NavigationManager.NavigateTo("/contacts");
     }
 
     private async Task LoadContact()
@@ -98,8 +125,7 @@ else
 
     private async Task OnValidSubmit()
     {
-        
-    }
 
+    }
 
 }

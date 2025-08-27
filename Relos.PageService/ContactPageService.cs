@@ -69,8 +69,10 @@ public class ContactPageService : IContactPageService
             Name = createContactRequest.Name,
             Email = createContactRequest.Email,
             PrimaryNumber = createContactRequest.PrimaryNumber,
+            SecondaryNumber = createContactRequest.SecondaryNumber,
             CompanyName = createContactRequest.CompanyName,
-            Address = createContactRequest.Address,
+            Position =  createContactRequest.Position,
+            Location = createContactRequest.Location,
         };
 
         SaveResult saveResult = _contactBusinessService.CreateNewContact(contactDto, workspaceId.Value, userId.Value);
@@ -98,8 +100,10 @@ public class ContactPageService : IContactPageService
             Name = contactDto.Name,
             Email = contactDto.Email,
             PrimaryNumber = contactDto.PrimaryNumber,
+            SecondaryNumber = contactDto.SecondaryNumber,
             CompanyName = contactDto.CompanyName,
-            Address = contactDto.Address,
+            Position = contactDto.Position,
+            Location = contactDto.Location,
             CreatedByName = contactDto.CreatedByUser.UserOauthAccount.Username,
             CreatedOn = contactDto.CreatedOn,
             LastUpdatedByName = contactDto.LastUpdatedByUser.UserOauthAccount.Username,

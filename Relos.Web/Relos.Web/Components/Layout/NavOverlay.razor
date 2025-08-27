@@ -24,7 +24,7 @@
         width: 100%;
     }
 
-
+    /* Desktop and tablet responsive breakpoints */
     @@media (max-width: 1300px) and (min-width: 769px) {
         .search-container {
             max-width: 400px;
@@ -43,26 +43,129 @@
         }
     }
 
-    /* Mobile screens */
+    /*mobile screens styling */
     @@media (max-width: 768px) {
+        /* Hide button text on mobile */
         .mobile-nav-button .rz-button-text {
             display: none;
         }
 
+        /* Tighter header spacing */
         .mobile-header-stack {
+            gap: 0.25rem !important;
+            padding: 0.5rem 1rem !important;
+        }
+
+        /* Optimize navigation button spacing */
+        .mobile-nav-stack {
             gap: 0.5rem !important;
+            flex: 0 0 auto;
+        }
+
+        /* Mobile navigation buttons - icon-only styling */
+        .mobile-nav-button {
+            min-width: 44px !important;
+            height: 44px !important;
+            padding: 8px !important;
+            border-radius: 8px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        .mobile-nav-button .rz-button-icon {
+            margin: 0 !important; 
+            font-size: 20px !important; 
+        }
+        
+        .search-container {
+            max-width: 120px;
+            transform: translateX(-50%);
+            left: 50%;
+        }
+
+        .search-input {
+            font-size: 14px;
+            padding: 6px 8px;
+            border-radius: 6px;
+        }
+        
+        .rz-profile-menu {
+            flex: 0 0 auto;
+        }
+
+        /* Ensure proper spacing between nav sections */
+        .mobile-header-stack > :first-child {
+            flex: 0 0 auto;
+        }
+
+        .mobile-header-stack > :last-child {
+            flex: 0 0 auto;
+        }
+    }
+
+
+    @@media (max-width: 480px) {
+        .mobile-header-stack {
+            padding: 0.5rem !important;
         }
 
         .mobile-nav-stack {
-            gap: 1rem !important;
+            gap: 0.25rem !important;
+        }
+
+        .mobile-nav-button {
+            min-width: 40px !important;
+            height: 40px !important;
+            padding: 6px !important;
+        }
+
+        .mobile-nav-button .rz-button-icon {
+            font-size: 18px !important;
         }
 
         .search-container {
-            max-width: 150px;
-            transform: translateX(-40%);
+            max-width: 100px;
+        }
+
+        .search-input {
+            font-size: 13px;
+            padding: 4px 6px;
         }
     }
+
+    /* Landscape mobile optimization */
+    @@media (max-width: 768px) and (orientation: landscape) {
+        .mobile-header-stack {
+            padding: 0.25rem 1rem !important;
+        }
+
+        .mobile-nav-button {
+            height: 36px !important;
+            min-width: 36px !important;
+        }
+
+        .mobile-nav-button .rz-button-icon {
+            font-size: 16px !important;
+        }
+    }
+
+    /* Hover effects for touch devices */
+    @@media (hover: hover) {
+        .mobile-nav-button:hover {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            transform: translateY(-1px);
+            transition: all 0.2s ease;
+        }
+    }
+
+    /* Active/pressed state for better touch feedback */
+    .mobile-nav-button:active {
+        transform: scale(0.95);
+        background-color: rgba(255, 255, 255, 0.15) !important;
+    }
 </style>
+
 
 <RadzenLayout>
     <RadzenHeader>
@@ -70,6 +173,7 @@
             
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="4rem" class="mobile-nav-stack">
                 <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="inbox" Text="Inbox" Click="@(() => NavigateToInbox())" class="mobile-nav-button" Style="background:none; box-shadow: none; color: white"/>
+                <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="view_timeline" Text="Timeline" Click="@(() => NavigateToTimeline())" class="mobile-nav-button" Style="background:none; box-shadow: none; color: white"></RadzenButton>
                 <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="contacts" Text="Contacts" Click="@(() => NavigateToContacts())" class="mobile-nav-button" Style="background:none; box-shadow: none; color: white"/>
             </RadzenStack>
 
@@ -83,7 +187,8 @@
                     <RadzenImage Path="@AvatarUrl" Style="height: 40px; width: 40px; border-radius: 25px;"/>
                 </Template>
                 <ChildContent>
-                    <RadzenProfileMenuItem Text="Settings" Path="settings" Icon="Settings"></RadzenProfileMenuItem>
+                    <RadzenProfileMenuItem Text="User Settings" Path="user/settings" Icon="settings_account_box"></RadzenProfileMenuItem>
+                    <RadzenProfileMenuItem Text="Workspace Settings" Path="workspace/settings" Icon="settings_panorama"></RadzenProfileMenuItem>
                     <RadzenProfileMenuItem Text="Change Workspace" Path="workspaces" Icon="interactive_space"></RadzenProfileMenuItem>
                     <RadzenProfileMenuItem Text="Log out" Path="logout" Icon="logout"></RadzenProfileMenuItem>
                 </ChildContent>
@@ -118,6 +223,11 @@
     private void NavigateToContacts()
     {
         NavigationManager.NavigateTo("/contacts");
+    }
+
+    private void NavigateToTimeline()
+    {
+        NavigationManager.NavigateTo("/timeline");
     }
 
     private void OnSearch()

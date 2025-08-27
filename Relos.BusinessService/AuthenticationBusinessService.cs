@@ -26,12 +26,13 @@ public class AuthenticationBusinessService : IAuthenticationBusinessService
     
     public AuthenticateResult ProcessOauthLogin(AuthProvider provider, string uuid, string userName, string avatar)
     {
-        UserOauthAccountDto? userOauthAccountDto = _userOauthAccountBusinessService.GetUserOauthAccountByUuid(uuid);
-
-        if (userOauthAccountDto != null)
+        int? userId = _userOauthAccountBusinessService.GetUserIdByUuid(uuid);
+        
+        if (userId is int actualUserId)
         {
-            _userOauthAccountBusinessService.UpdateLastLoginDate(userOauthAccountDto.Id);
-            return AuthenticateResult.AsSuccess(userOauthAccountDto.Id);
+
+            _userBusinessService.UpdateLastLoginDate(actualUserId, DateTime.UtcNow);
+            return AuthenticateResult.AsSuccess(actualUserId);
         }
         SaveResult saveNewUserResult = _userBusinessService.CreateAndSaveNewUser(provider, uuid, userName, avatar);
 

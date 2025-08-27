@@ -1,22 +1,31 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Relos.Models.Interfaces;
 
 namespace Relos.Models.DatabaseModels;
 
-public class User : ISystemArchivableAuditable
+public class User : ISystemCreateAuditable , ISystemArchiveAuditable, ISystemLastUpdateAuditable, ILoginAuditable
 {
     public User()
     {
-        CreatedDateTimeUtc = DateTime.UtcNow;
-        LastUpdatedDateTimeUtc = DateTime.UtcNow;
+        CreatedBySystemUtc = DateTime.UtcNow;
+        LastUpdatedBySystemUtc = DateTime.UtcNow;
+        IsArchived = false;
     }
     public int Id { get; set; }
-    // ISystemArchivableAuditable
-    // IBaseAuditable
-    public DateTime LastUpdatedDateTimeUtc { get; set; }
-    public DateTime CreatedDateTimeUtc { get; set; }
-    // IBaseArchivable
-    public bool IsArchived { get; set; }
-    public DateTime? ArchivedDateTimeUtc { get; set; }
+    // ISystemCreateAuditable
+    [Required]
+    public DateTime CreatedBySystemUtc { get; set; } 
+    // ISystemUpdateAuditable
+    [Required]
+    public DateTime LastUpdatedBySystemUtc { get; set; }
+    // ISystemArchiveAuditable
+    public bool? IsArchived { get; set; }
+    public DateTime? ArchivedBySystemUtc { get; set; }
+    // ILoginAuditable
+    [Required]
+    public DateTime LastLoginUtc { get; set; }
     public UserOauthAccount UserOauthAccount { get; set; }
-    //TODO Add User Profile
+
 }
